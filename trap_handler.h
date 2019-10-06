@@ -1,0 +1,44 @@
+#pragma once
+
+#define TP_USER_SP_OFFSET 0
+#define TP_KERNEL_SP_OFFSET 8
+
+//trap frame offset
+#define TF_RA_OFFSET 0
+#define TF_GP_OFFSET 8
+#define TF_T0_OFFSET 16
+#define TF_T1_OFFSET 24
+#define TF_T2_OFFSET 32
+#define TF_S0_OFFSET 40
+#define TF_S1_OFFSET 48
+#define TF_A0_OFFSET 56
+#define TF_A1_OFFSET 64
+#define TF_A2_OFFSET 72
+#define TF_A3_OFFSET 80
+#define TF_A4_OFFSET 88
+#define TF_A5_OFFSET 96
+#define TF_A6_OFFSET 104
+#define TF_A7_OFFSET 112
+#define TF_S2_OFFSET 120
+#define TF_S3_OFFSET 128
+#define TF_S4_OFFSET 136
+#define TF_S5_OFFSET 144
+#define TF_S6_OFFSET 152
+#define TF_S7_OFFSET 160
+#define TF_S8_OFFSET 168
+#define TF_S9_OFFSET 176
+#define TF_S10_OFFSET 184
+#define TF_S11_OFFSET 192
+#define TF_T3_OFFSET 200
+#define TF_T4_OFFSET 208
+#define TF_T5_OFFSET 216
+#define TF_T6_OFFSET 224
+#define TF_SEPC_OFFSET 232
+#define TF_STVAL_OFFSET 240
+#define TF_SCAUSE_OFFSET 248
+#define TF_SSTATUS_OFFSET 256
+#define TF_SCCRATCH_OFFSET 264
+#define TF_KERNEL_SP_OFFSET 272
+#define TF_SP_OFFSET 280
+#define TF_SIZE 288
+
