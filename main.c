@@ -6,6 +6,7 @@
 #include "trap.h"
 #include "uart.h"
 #include "sbi.h"
+#include "timer.h"
 
 void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
 {
@@ -34,8 +35,12 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
         //die("message");
     }
 
-    //sbi_set_timer(0x800);
-    enable_interrupt();
+    result = init_timer();
+    if(!result)
+    {
+
+    }
+
 
     write_char_by_uart('h');
     write_char_by_uart('e');
@@ -43,6 +48,8 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     write_char_by_uart('l');
     write_char_by_uart('o');
     write_char_by_uart('\n');
+
+    enable_interrupt();
 
     while(true) {
         __asm__ volatile("wfi");

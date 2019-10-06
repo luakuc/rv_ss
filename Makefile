@@ -16,7 +16,7 @@ QEMU_FLAGS	:= -monitor null -cpu rv64,x-h=true -m 4G -display none -serial mon:s
 
 #	-kernel $(RISCV_TOOLS)/../opensbi/build/platform/qemu/virt/firmware/fw_jump.elf \
 
-OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o
+OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o
 
 IMAGE	:= rvos
 

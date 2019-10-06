@@ -5,6 +5,7 @@
 #include "exception.h"
 #include "plic.h"
 #include "interrupt.h"
+#include "timer.h"
 
 extern void trap_handler(void);
 
@@ -48,13 +49,16 @@ void c_trap_handler(const trap_frame_t* trap_frame)
             case user_software_interrupt:
             case supervisor_software_interrupt:
             case user_timer_interrupt:
-            case supervisor_timer_interrupt:
             case user_external_interrupt:
                 // TODO
                 // printf("the trap [%s] is not implemented\n",
                 // convert_interrupt_code_to_string(code));
                 break;
-
+            case supervisor_timer_interrupt:
+            {
+                count_up_tick();
+                break;
+            }
             case supervisor_external_interrupt:
             {
                 uint64_t irq = plic_claim();
