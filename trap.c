@@ -1,3 +1,4 @@
+#include "stdio.h"
 #include "trap.h"
 #include "csr.h"
 #include "csr_func.h"
@@ -43,8 +44,8 @@ void disable_interrupt(void)
 
 void c_trap_handler(const trap_frame_t* trap_frame)
 {
+    uint64_t code = trap_frame->scause.code;
     if (trap_frame->scause.interrupt) {
-        uint64_t code = trap_frame->scause.code;
         switch (code) {
             case user_software_interrupt:
             case supervisor_software_interrupt:
@@ -70,7 +71,17 @@ void c_trap_handler(const trap_frame_t* trap_frame)
                 break;
             }
             default:
-                // TODO
+                panic(convert_interrupt_code_to_string(code));
+                break;
+        }
+    }
+    else
+    {
+        //exception
+        switch(code)
+        {
+            default:
+                panic(convert_exception_code_to_string(code));
                 break;
         }
     }
