@@ -2,6 +2,8 @@
 #include "uart.h"
 #include "sbi.h"
 
+#include "thread.h"
+
 #include <stdint.h>
 
 static uint64_t ticks;
@@ -26,5 +28,7 @@ void count_up_tick(void)
     //TODO context switch
     uint64_t curret_time = rdtime();
     sbi_set_timer(10000000 + curret_time);
-    write_char_by_uart('a');
+
+    void thread_swap_test(void);
+    thread_swap_test();
 }

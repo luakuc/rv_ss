@@ -2,6 +2,7 @@
 
 .globl c_trap_handler
 .globl trap_handler
+.globl return_from_exception
 
 trap_handler:
     # save previous thread pointer(tp) and load the kernel tp;
@@ -62,6 +63,7 @@ _save_trap_frame:
 
     mv a0, sp
     call c_trap_handler
+return_from_exception:
 
     ld a0, TF_SSTATUS_OFFSET(sp)
     csrw sstatus, a0
@@ -100,4 +102,3 @@ _save_trap_frame:
     ld sp, TF_SP_OFFSET(sp)
 
     sret
-

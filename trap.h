@@ -1,14 +1,18 @@
 #pragma once
 
+#include "trap_handler.h"
 #include <stdbool.h>
 #include <stdint.h>
-#include "trap_handler.h"
 
 typedef struct scause
 {
     uint64_t code : 63;
     uint8_t interrupt : 1;
 } __attribute__((packed)) csr_scause_t;
+
+#define SSTATUS_UIE 0x00000001
+#define SSTATUS_SIE 0x00000002
+#define SSTATUS_SPP 0x00000080
 
 typedef struct trap_frame
 {
@@ -43,7 +47,7 @@ typedef struct trap_frame
     uint64_t t6;
     uint64_t sepc;
     uint64_t stval;
-    //uint64_t scause;
+    // uint64_t scause;
     csr_scause_t scause;
     uint64_t sstatus;
     uint64_t sscratch;
@@ -57,8 +61,6 @@ typedef struct thread_info
     uint64_t kernel_sp;
     uint64_t cpu_id;
 } thread_info_t;
-
-
 
 bool init_trap(uint64_t cpu_id);
 
