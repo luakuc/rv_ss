@@ -17,6 +17,7 @@ _save_trap_frame:
 
     sd ra, TF_RA_OFFSET(sp)
     sd gp, TF_GP_OFFSET(sp)
+    sd tp, TF_TP_OFFSET(sp)
     sd t0, TF_T0_OFFSET(sp)
     sd t1, TF_T1_OFFSET(sp)
     sd t2, TF_T2_OFFSET(sp)
@@ -72,6 +73,7 @@ return_from_exception:
 
     ld ra, TF_RA_OFFSET(sp)
     ld gp, TF_GP_OFFSET(sp)
+    ld tp, TF_TP_OFFSET(sp)
     ld t0, TF_T0_OFFSET(sp)
     ld t1, TF_T1_OFFSET(sp)
     ld t2, TF_T2_OFFSET(sp)

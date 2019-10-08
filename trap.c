@@ -1,3 +1,5 @@
+#include <stddef.h>
+
 #include "stdio.h"
 #include "trap.h"
 #include "csr.h"
@@ -7,6 +9,7 @@
 #include "plic.h"
 #include "interrupt.h"
 #include "timer.h"
+#include "utils.h"
 
 extern void trap_handler(void);
 
@@ -16,8 +19,8 @@ static thread_info_t bsp_ti;
 
 bool init_trap(uint64_t cpu_id)
 {
-    bsp_ti.kernel_sp = (uintptr_t)thread_info_region + 0x1000 - 8;
-    bsp_ti.user_sp = 0;
+    bsp_ti.kernel_stack = (uintptr_t)thread_info_region + 0x1000 - 8;
+    bsp_ti.user_stack = (uint64_t)NULL;
     bsp_ti.cpu_id = cpu_id;
 
     csr_write_sscratch((uint64_t)&bsp_ti);

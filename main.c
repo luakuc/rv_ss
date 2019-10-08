@@ -8,6 +8,9 @@
 #include "sbi.h"
 #include "timer.h"
 
+static int count_kthread = 0;
+static int count_main = 0;
+
 void kthread_0(void)
 {
     write_char_by_uart('t');
@@ -20,6 +23,7 @@ void kthread_0(void)
 
     while(true)
     {
+        count_kthread++;
         __asm__ volatile("wfi");
     }
 }
@@ -57,6 +61,7 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
 
     }
 
+    void init_test_thread();
     init_test_thread(kthread_0);
 
     write_char_by_uart('h');
@@ -69,6 +74,7 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     enable_interrupt();
 
     while(true) {
+        count_main++;
         __asm__ volatile("wfi");
     }
 }

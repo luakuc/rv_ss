@@ -14,10 +14,19 @@ typedef struct scause
 #define SSTATUS_SIE 0x00000002
 #define SSTATUS_SPP 0x00000080
 
+typedef struct thread_info
+{
+    uint64_t user_stack;
+    uint64_t kernel_stack;
+    uint64_t cpu_id;
+} thread_info_t;
+
 typedef struct trap_frame
 {
     uint64_t ra;
     uint64_t gp;
+    //uint64_t tp;
+    thread_info_t* tp;
     uint64_t t0;
     uint64_t t1;
     uint64_t t2;
@@ -55,12 +64,7 @@ typedef struct trap_frame
     uint64_t sp;
 } trap_frame_t;
 
-typedef struct thread_info
-{
-    uint64_t user_sp;
-    uint64_t kernel_sp;
-    uint64_t cpu_id;
-} thread_info_t;
+
 
 bool init_trap(uint64_t cpu_id);
 

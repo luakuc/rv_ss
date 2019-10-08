@@ -3,6 +3,8 @@
 static thread_struct_t boot_thread;
 static thread_struct_t test_thread;
 static uint8_t thread_1_stack[0x1000];
+static uint8_t kernel_stack_1[0x1000];
+static thread_info_t thread_info_1;
 
 void context_switch(context_t* prev, context_t* next);
 void return_from_exception(void);
@@ -18,6 +20,10 @@ thread_struct_t *create_kernel_thread(uint64_t entry_address)
     trap_frame->sepc = entry_address;
     trap_frame->sp = stack_top;
     trap_frame->sstatus = 0x8000000000007220;
+    trap_frame->tp = &thread_info_1;
+    trap_frame->tp->user_stack = (uint64_t)NULL;
+    trap_frame->tp->kernel_stack = (uint64_t)kernel_stack_1;
+    trap_frame->tp->cpu_id = 0;
 
     new_thread->id = thread_id;
     memory_set(&new_thread->context, 0x00, sizeof(context_t));
@@ -36,7 +42,8 @@ void task_switch(thread_struct_t *prev_thread, thread_struct_t *next_thread)
 
 void thread_swap_test(void)
 {
-    static bool is_next_boot_thread = false;
+    static bool is_next_boot_thread = true;
+    is_next_boot_thread = !is_next_boot_thread;
     if(is_next_boot_thread)
     {
         task_switch(&test_thread, &boot_thread);
@@ -45,7 +52,6 @@ void thread_swap_test(void)
     {
         task_switch(&boot_thread, &test_thread);
     }
-    is_next_boot_thread = !is_next_boot_thread;
 }
 
 void init_test_thread(uint64_t entry)
