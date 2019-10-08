@@ -10,7 +10,7 @@ _start:
 
     //TODO setup global pointer
 
-    la sp, kernel_stack + 0x1000
+    la sp, _kernel_stack;
     call start_kernel
 
     j _shutdown

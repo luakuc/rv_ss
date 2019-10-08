@@ -14,6 +14,7 @@ enum {
     VIRT_PCIE_MMIO,
     VIRT_PCIE_PIO,
     VIRT_PCIE_ECAM,
+    VIRT_MEM_MAP_END,
 };
 
 struct memory_map_entry {
@@ -21,4 +22,3 @@ struct memory_map_entry {
     uintptr_t size;
 };
 
-extern const struct memory_map_entry memory_map[];

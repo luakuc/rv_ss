@@ -10,16 +10,21 @@
 #include "interrupt.h"
 #include "timer.h"
 #include "utils.h"
+#include "memory_manager.h"
 
 extern void trap_handler(void);
-
-static uint8_t thread_info_region[0x1000];
 
 static thread_info_t bsp_ti;
 
 bool init_trap(uint64_t cpu_id)
 {
-    bsp_ti.kernel_stack = (uintptr_t)thread_info_region + 0x1000 - 8;
+    uint64_t kernel_stack_base = (uint64_t)kalloc_4k();
+    if(kernel_stack_base == (uint64_t)NULL)
+    {
+        return false;
+    }
+
+    bsp_ti.kernel_stack = kernel_stack_base + 0x1000 - 8;
     bsp_ti.user_stack = (uint64_t)NULL;
     bsp_ti.cpu_id = cpu_id;
 
