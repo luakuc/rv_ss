@@ -10,6 +10,7 @@
 #include "utils.h"
 #include "stdio.h"
 #include "memory_manager.h"
+#include "virtual_memory.h"
 
 extern const struct memory_map_entry memory_map[];
 
@@ -42,16 +43,22 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
         panic("failed the init_memory_manager");
     }
 
-    result = init_plic(&memory_map[VIRT_PLIC]);
-    if(!result)
-    {
-        panic("failed the init_plic.");
-    }
-
     result = init_trap(hart_id);
     if(!result)
     {
         panic("failed the init_trap");
+    }
+
+    result = init_virtual_memory();
+    if(!result)
+    {
+        panic("failed at init_virtual_memory");
+    }
+
+    result = init_plic(&memory_map[VIRT_PLIC]);
+    if(!result)
+    {
+        panic("failed the init_plic.");
     }
 
     result = init_uart(&memory_map[VIRT_UART0]);

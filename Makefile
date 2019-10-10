@@ -11,14 +11,14 @@ LDFLAGS		:= -T script.ld
 FIRMWARE	:= $(RISCV_TOOLS)/platform/qemu/virt/firmware/fw_jump.elf
 RAM_SIZE	:= 128M
 MACHINE		:= virt
-QEMU		:= $(RISCV_TOOLS)/../qemu/riscv64-softmmu/qemu-system-riscv64
+QEMU		:= qemu/riscv64-softmmu/qemu-system-riscv64
 QEMU_FLAGS	:= -monitor null -cpu rv64,x-h=true -display none -serial mon:stdio \
 	-M $(MACHINE) \
 	-m $(RAM_SIZE) \
 	-kernel $(FIRMWARE) \
 	-device loader,file=rvos,addr=0x80200000 -gdb tcp::12345 -S
 
-OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o
+OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o
 
 IMAGE	:= rvos
 
