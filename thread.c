@@ -24,7 +24,7 @@ thread_struct_t *create_kernel_thread_test(uint64_t entry_address)
 
     trap_frame->sepc = entry_address;
     trap_frame->sp = stack_top;
-    trap_frame->sstatus = 0x8000000000007220;
+    trap_frame->sstatus = 0x8000000000006120;
     trap_frame->tp = &thread_info_1;
     trap_frame->tp->user_stack = (uint64_t)NULL;
 
