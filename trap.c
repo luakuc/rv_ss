@@ -1,16 +1,17 @@
 #include <stddef.h>
 
-#include "stdio.h"
-#include "trap.h"
 #include "csr.h"
 #include "csr_func.h"
-#include "register.h"
 #include "exception.h"
-#include "plic.h"
 #include "interrupt.h"
-#include "timer.h"
-#include "utils.h"
 #include "memory_manager.h"
+#include "plic.h"
+#include "register.h"
+#include "stdio.h"
+#include "string.h"
+#include "timer.h"
+#include "trap.h"
+#include "utils.h"
 
 extern void trap_handler(void);
 
@@ -19,7 +20,7 @@ static thread_info_t bsp_ti;
 bool init_trap(uint64_t cpu_id)
 {
     uint64_t kernel_stack_base = (uint64_t)kalloc_4k();
-    if(kernel_stack_base == (uint64_t)NULL)
+    if (kernel_stack_base == (uint64_t)NULL)
     {
         return false;
     }
@@ -29,7 +30,7 @@ bool init_trap(uint64_t cpu_id)
     bsp_ti.cpu_id = cpu_id;
 
     csr_write_sscratch((uint64_t)&bsp_ti);
-    write_tp(0);  // clear the thread pointer.
+    write_tp(0); // clear the thread pointer.
 
     csr_write_stvec((uint64_t)trap_handler);
 
@@ -50,11 +51,13 @@ void disable_interrupt(void)
     csr_write_sie(0);
 }
 
-void c_trap_handler(const trap_frame_t* trap_frame)
+void c_trap_handler(const trap_frame_t *trap_frame)
 {
     uint64_t code = trap_frame->scause.code;
-    if (trap_frame->scause.interrupt) {
-        switch (code) {
+    if (trap_frame->scause.interrupt)
+    {
+        switch (code)
+        {
             case user_software_interrupt:
             case supervisor_software_interrupt:
             case user_timer_interrupt:
@@ -73,9 +76,9 @@ void c_trap_handler(const trap_frame_t* trap_frame)
                 uint64_t irq = plic_claim();
 
                 bool result = handle_external_interrupt(irq);
-                //TODO
+                // TODO
                 plic_complete(irq);
-                //TODO
+                // TODO
                 break;
             }
             default:
@@ -85,9 +88,25 @@ void c_trap_handler(const trap_frame_t* trap_frame)
     }
     else
     {
-        //exception
-        switch(code)
+        // exception
+        char sepc_str[65];
+        char stval_str[65];
+        int_to_str(trap_frame->sepc, sepc_str);
+        int_to_str(trap_frame->stval, stval_str);
+        switch (code)
         {
+            case instruction_page_fault:
+            {
+                char address_string[32];
+                put_string(convert_exception_code_to_string(code));
+                put_string("\nsepc:\t0x");
+                put_string(sepc_str);
+                put_string("\nstval:\t0x");
+                put_string(stval_str);
+                put_string("\n");
+                panic("panic");
+                break;
+            }
             default:
                 panic(convert_exception_code_to_string(code));
                 break;
