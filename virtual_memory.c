@@ -3,7 +3,7 @@
 #include "memory_manager.h"
 #include "string.h"
 
-static page_table_t kernel_root_page_table;
+page_table_t kernel_root_page_table;
 
 static inline uint16_t extract_vpn(const virtual_address_t v_address,
                                    const int level)
@@ -56,6 +56,55 @@ page_table_entry_t *page_walk(const page_table_t root,
 
     uint16_t vpn = extract_vpn(address, 0);
     return &current_table[vpn];
+}
+
+bool virtual_memory_map(page_table_t page_table, physical_address_t p_address,
+                        virtual_address_t v_address, const size_t size,
+                        const uint16_t permission)
+{
+    if (v_address & 0xfff)
+    {
+        // the address should be aligned
+        return false;
+    }
+    if (p_address & 0xfff)
+    {
+        // the address should be aligned
+        return false;
+    }
+    if (size & 0xfff)
+    {
+        return false;
+    }
+
+    uint64_t last_page_base = v_address + size;
+    if (size == 0)
+    {
+        return true;
+    }
+
+    while (true)
+    {
+        page_table_entry_t *entry =
+            page_walk(page_table, v_address);
+        if (entry == NULL)
+        {
+            return false;
+        }
+
+        *entry = convert_into_table_entry((page_table_t)p_address);
+        entry->fields.access_control.valid = 1;
+        entry->value |= permission;
+
+        v_address += 0x1000;
+        p_address += 0x1000;
+        if (v_address == last_page_base)
+        {
+            break;
+        }
+    }
+
+    return true;
 }
 
 bool map_kernel_virtual_memory(physical_address_t p_address,
@@ -132,14 +181,15 @@ bool init_virtual_memory(void)
 
     memory_set(kernel_root_page_table, 0x00, sizeof(page_table_t) * 512);
 
-    //DRAM
+    // DRAM
     map_kernel_virtual_memory(0x80000000, 0x80000000, 0x800000, 0b1111);
 
-    //PLIC
+    // PLIC
     map_kernel_virtual_memory(0xc000000, 0xc000000, 0x4000000, 0b0110);
 
-    //UART
-    map_kernel_virtual_memory(0x10000000, 0x10000000, (0x100 + 0xfff) & -0x1000, 0b0110);
+    // UART
+    map_kernel_virtual_memory(0x10000000, 0x10000000, (0x100 + 0xfff) & -0x1000,
+                              0b0110);
 
     write_page_table(kernel_root_page_table);
 

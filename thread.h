@@ -1,12 +1,12 @@
 #pragma once
 
-#include "trap.h"
-#include "string.h"
 #include <stddef.h>
 
-void return_from_exception(void);
+#include "string.h"
+#include "trap.h"
+#include "virtual_memory.h"
 
-static size_t thread_id = 0;
+void return_from_exception(void);
 
 typedef struct context
 {
@@ -24,13 +24,13 @@ typedef struct context
     uint64_t s9;
     uint64_t s10;
     uint64_t s11;
-
 } context_t;
 
 typedef struct thread_struct
 {
     uint64_t id;
     context_t context;
+    page_table_t page_table;
 } thread_struct_t;
 
 

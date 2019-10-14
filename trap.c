@@ -95,9 +95,7 @@ void c_trap_handler(const trap_frame_t *trap_frame)
         int_to_str(trap_frame->stval, stval_str);
         switch (code)
         {
-            case instruction_page_fault:
-            {
-                char address_string[32];
+            default:
                 put_string(convert_exception_code_to_string(code));
                 put_string("\nsepc:\t0x");
                 put_string(sepc_str);
@@ -105,10 +103,6 @@ void c_trap_handler(const trap_frame_t *trap_frame)
                 put_string(stval_str);
                 put_string("\n");
                 panic("panic");
-                break;
-            }
-            default:
-                panic(convert_exception_code_to_string(code));
                 break;
         }
     }

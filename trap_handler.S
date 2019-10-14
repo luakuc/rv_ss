@@ -50,10 +50,12 @@ _save_trap_frame:
     csrr s1, stval
     csrr s2, scause
     csrr s3, sstatus
+    csrr s4, sscratch
     sd s0, TF_SEPC_OFFSET(sp)
     sd s1, TF_STVAL_OFFSET(sp)
     sd s2, TF_SCAUSE_OFFSET(sp)
     sd s3, TF_SSTATUS_OFFSET(sp)
+    sd s4, TF_SSCRATCH_OFFSET(sp)
 
     ld s0, TP_USER_SP_OFFSET(tp)
     sd s0, TF_SP_OFFSET(sp)
@@ -63,6 +65,7 @@ _save_trap_frame:
     //TODO load the global pointer if you need.
 
     mv a0, sp
+
     call c_trap_handler
 return_from_exception:
 
@@ -70,6 +73,8 @@ return_from_exception:
     csrw sstatus, a0
     ld a0, TF_SEPC_OFFSET(sp)
     csrw sepc, a0
+    ld a0, TF_SSCRATCH_OFFSET(sp)
+    csrw sscratch, a0
 
     ld ra, TF_RA_OFFSET(sp)
     ld gp, TF_GP_OFFSET(sp)
@@ -102,5 +107,8 @@ return_from_exception:
     ld t5, TF_T5_OFFSET(sp)
     ld t6, TF_T6_OFFSET(sp)
     ld sp, TF_SP_OFFSET(sp)
+
+    sd sp, TP_KERNEL_SP_OFFSET(tp)
+    ld sp, TP_USER_SP_OFFSET(tp)
 
     sret

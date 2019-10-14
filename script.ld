@@ -15,10 +15,13 @@ SECTIONS
     {
         *(.text.start);
         *(.text);
+        . = ALIGN(0x1000);
+        *(.text.user_sample);
     }
 
-    .data :
+    .data ALIGN(0x1000):
     {
+        *(.sdata)
         *(.data);
     }
 
@@ -31,6 +34,7 @@ SECTIONS
     {
         *(.bss);
     }
+
 
     . = ALIGN(0x1000);
     . = . + 0x8000;

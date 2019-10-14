@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
 typedef struct satp
 {
@@ -51,4 +52,11 @@ typedef struct sv39_page_table_entry
 
 typedef page_table_entry_t *page_table_t;
 
+extern page_table_t kernel_root_page_table;
+
 bool init_virtual_memory();
+void write_page_table(const page_table_t page_table);
+bool virtual_memory_map(page_table_t page_table, physical_address_t p_address,
+                        virtual_address_t v_address, const size_t size,
+                        const uint16_t permission);
+
