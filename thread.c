@@ -46,16 +46,11 @@ void create_user_process(uint64_t entry_address)
 
     trap_frame->sepc = entry_address;
     trap_frame->sp = (thread_stack + 0x1000 - 1) & -8;
-    // TODO spp を0にする
     trap_frame->sstatus = 0x8000000000006020;
-    //trap_frame->tp = &thread_info_1;
-    //trap_frame->tp->user_stack = trap_frame->sp;
     thread_info_1.user_stack = trap_frame->sp;
     thread_info_1.cpu_id = 0;
     trap_frame->sscratch = (uint64_t)&thread_info_1;
     trap_frame->tp = &thread_info_1;
-
-    //trap_frame->tp->kernel_stack = (uint64_t)kernel_stack + 0xff0;
 
     new_thread->id = get_next_thread_id();
     memory_set(&new_thread->context, 0x00, sizeof(context_t));
@@ -77,6 +72,10 @@ void create_user_process(uint64_t entry_address)
     result =
         virtual_memory_map(page_table, (physical_address_t)thread_stack,
                            (virtual_address_t)thread_stack, 0x1000, 0b11111);
+    if(!result)
+    {
+        //TODO
+    }
 
     new_thread->page_table = page_table;
 }

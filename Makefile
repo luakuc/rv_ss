@@ -18,7 +18,7 @@ QEMU_FLAGS	:= -monitor null -cpu rv64,x-h=true -display none -serial mon:stdio \
 	-kernel $(FIRMWARE) \
 	-device loader,file=rvos,addr=0x80200000 -gdb tcp::12345 -S
 
-OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o user_sample.o
+OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o user_sample.o system_call.o
 
 IMAGE	:= rvos
 

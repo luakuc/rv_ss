@@ -9,6 +9,7 @@
 #include "register.h"
 #include "stdio.h"
 #include "string.h"
+#include "system_call.h"
 #include "timer.h"
 #include "trap.h"
 #include "utils.h"
@@ -51,7 +52,7 @@ void disable_interrupt(void)
     csr_write_sie(0);
 }
 
-void c_trap_handler(const trap_frame_t *trap_frame)
+void c_trap_handler(trap_frame_t *trap_frame)
 {
     uint64_t code = trap_frame->scause.code;
     if (trap_frame->scause.interrupt)
@@ -95,6 +96,14 @@ void c_trap_handler(const trap_frame_t *trap_frame)
         int_to_str(trap_frame->stval, stval_str);
         switch (code)
         {
+            case environment_call_from_u:
+            {
+                uint64_t result = do_system_call(trap_frame);
+                trap_frame->a0 = result;
+                // sepc indicates the ecall instruction address, not the following instruction.
+                trap_frame->sepc += 0x4;
+                break;
+            }
             default:
                 put_string(convert_exception_code_to_string(code));
                 put_string("\nsepc:\t0x");

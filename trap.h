@@ -64,8 +64,6 @@ typedef struct trap_frame
     uint64_t sp;
 } trap_frame_t;
 
-
-
 bool init_trap(uint64_t cpu_id);
 
 void enable_interrupt(void);

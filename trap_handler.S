@@ -17,7 +17,6 @@ _save_trap_frame:
 
     sd ra, TF_RA_OFFSET(sp)
     sd gp, TF_GP_OFFSET(sp)
-    sd tp, TF_TP_OFFSET(sp)
     sd t0, TF_T0_OFFSET(sp)
     sd t1, TF_T1_OFFSET(sp)
     sd t2, TF_T2_OFFSET(sp)
@@ -55,7 +54,7 @@ _save_trap_frame:
     sd s1, TF_STVAL_OFFSET(sp)
     sd s2, TF_SCAUSE_OFFSET(sp)
     sd s3, TF_SSTATUS_OFFSET(sp)
-    sd s4, TF_SSCRATCH_OFFSET(sp)
+    sd s4, TF_TP_OFFSET(sp)
 
     ld s0, TP_USER_SP_OFFSET(tp)
     sd s0, TF_SP_OFFSET(sp)
@@ -73,8 +72,9 @@ return_from_exception:
     csrw sstatus, a0
     ld a0, TF_SEPC_OFFSET(sp)
     csrw sepc, a0
-    ld a0, TF_SSCRATCH_OFFSET(sp)
-    csrw sscratch, a0
+
+    sd sp, TP_KERNEL_SP_OFFSET(tp)
+    csrw sscratch, tp
 
     ld ra, TF_RA_OFFSET(sp)
     ld gp, TF_GP_OFFSET(sp)
@@ -108,7 +108,5 @@ return_from_exception:
     ld t6, TF_T6_OFFSET(sp)
     ld sp, TF_SP_OFFSET(sp)
 
-    sd sp, TP_KERNEL_SP_OFFSET(tp)
-    ld sp, TP_USER_SP_OFFSET(tp)
 
     sret
