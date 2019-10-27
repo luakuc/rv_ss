@@ -10,6 +10,8 @@ LDFLAGS		:= -T script.ld
 
 IMAGE	:= rvss
 
+DISK_IMG	:= disk.img
+
 FIRMWARE	:= $(RISCV_TOOLS)/platform/qemu/virt/firmware/fw_jump.elf
 RAM_SIZE	:= 128M
 MACHINE		:= virt
@@ -19,8 +21,10 @@ QEMU_FLAGS	:= -monitor null -cpu rv64,x-h=true -display none -serial mon:stdio \
 	-m $(RAM_SIZE) \
 	-kernel $(FIRMWARE) \
 	-device loader,file=$(IMAGE),addr=0x80200000 -gdb tcp::12345 -S
+QEMU_FLAGS 	+= -drive file=$(DISK_IMG),if=none,format=raw,id=file_0 \
+			   -device virtio-blk-device,drive=file_0,bus=virtio-mmio-bus.0
 
-OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o user_sample.o system_call.o
+OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o user_sample.o system_call.o virtio_mmio.o
 
 
 all: build
@@ -33,7 +37,7 @@ all: build
 .c.o:
 	$(CC) $(CCFLAGS) -c $<
 
-build: $(IMAGE)
+build: $(IMAGE) $(DISK_IMG)
 $(IMAGE): $(OBJS)
 	$(LD) $(LDFLAGS) *.o -o $@
 
@@ -45,6 +49,9 @@ dump: $(IMAGE)
 
 debug: $(IMAGE)
 	$(GDB) -x cmd.gdb $<
+
+$(DISK_IMG):
+	dd if=/dev/zero of=$(DISK_IMG) count=1024
 
 clean:
 	rm -rf $(IMAGE) *.o

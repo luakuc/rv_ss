@@ -191,6 +191,9 @@ bool init_virtual_memory(void)
     map_kernel_virtual_memory(0x10000000, 0x10000000, (0x100 + 0xfff) & -0x1000,
                               0b0110);
 
+    // virtio
+    map_kernel_virtual_memory(0x10001000, 0x10001000, (0x1000), 0b0110);
+
     write_page_table(kernel_root_page_table);
 
     return true;

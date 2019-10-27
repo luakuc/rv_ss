@@ -1,2 +1,4 @@
 *.o
 rvss
+disk.img
+qemu/

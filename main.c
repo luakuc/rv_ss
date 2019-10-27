@@ -11,6 +11,7 @@
 #include "stdio.h"
 #include "memory_manager.h"
 #include "virtual_memory.h"
+#include "virtio_mmio.h"
 
 extern const struct memory_map_entry memory_map[];
 
@@ -65,6 +66,12 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     if(!result)
     {
         panic("failed the init_uart");
+    }
+
+    result = init_virtio_mmio(&memory_map[VIRT_VIRTIO]);
+    if(!result)
+    {
+        panic("failed the init_virtio");
     }
 
     result = init_timer();
