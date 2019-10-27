@@ -1,5 +1,5 @@
 
-RISCV_TOOLS	:= /home/hima/kvm_riscv/local
+RISCV_TOOLS	:= $(HOME)/kvm_riscv/local
 TOOL		:= riscv64-unknown-elf-
 CC			:= $(RISCV_TOOLS)/bin/$(TOOL)gcc
 LD			:= $(RISCV_TOOLS)/bin/$(TOOL)ld
