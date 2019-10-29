@@ -103,8 +103,8 @@ typedef struct virtual_cpu
     } vcsr;
 
     // TODO
-    //uint64_t page_directory
+    // uint64_t page_directory
 
 } virtual_cpu_t;
 
-virtual_cpu_t* alloc_vcpu(void);
+virtual_cpu_t *alloc_vcpu(void);
