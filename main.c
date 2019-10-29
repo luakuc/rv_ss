@@ -12,6 +12,7 @@
 #include "memory_manager.h"
 #include "virtual_memory.h"
 #include "virtio_mmio.h"
+#include "vmm/vmm.h"
 
 extern const struct memory_map_entry memory_map[];
 
@@ -71,13 +72,25 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     result = init_virtio_mmio(&memory_map[VIRT_VIRTIO]);
     if(!result)
     {
-        panic("failed the init_virtio");
+        put_string(
+                "Failed to initialize virtio devices.\n"
+                "Any virtio devices are disabled\n");
+        //panic("failed the init_virtio");
     }
 
     result = init_timer();
     if(!result)
     {
         panic("failed the init_timer");
+    }
+
+    result = init_vmm();
+    if(!result)
+    {
+        //panic("failed the init_vmm");
+        put_string(
+                "Failed to initialize for virtual machine monitor\n"
+                "The VMM is disabled\n");
     }
 
     void init_test_thread();

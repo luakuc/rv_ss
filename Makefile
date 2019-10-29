@@ -5,7 +5,7 @@ CC			:= $(RISCV_TOOLS)/bin/$(TOOL)gcc
 LD			:= $(RISCV_TOOLS)/bin/$(TOOL)ld
 GDB			:= $(RISCV_TOOLS)/bin/$(TOOL)gdb
 
-CCFLAGS		:=-march=rv64ima -mabi=lp64 -nostdlib -ggdb3 -mcmodel=medany
+CCFLAGS		:=-march=rv64ima -mabi=lp64 -nostdlib -ggdb3 -mcmodel=medany -Iinclude/
 LDFLAGS		:= -T script.ld
 
 IMAGE	:= rvss
@@ -24,7 +24,8 @@ QEMU_FLAGS	:= -monitor null -cpu rv64,x-h=true -display none -serial mon:stdio \
 QEMU_FLAGS 	+= -drive file=$(DISK_IMG),if=none,format=raw,id=file_0 \
 			   -device virtio-blk-device,drive=file_0,bus=virtio-mmio-bus.0
 
-OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o user_sample.o system_call.o virtio_mmio.o
+VMM_OBJS	:= vmm/vcpu.o vmm/vmm.o
+OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o stdio.o utils.o memory_manager.o virtual_memory.o user_sample.o system_call.o virtio_mmio.o $(VMM_OBJS)
 
 
 all: build
