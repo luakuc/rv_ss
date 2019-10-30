@@ -30,5 +30,5 @@ void count_up_tick(void)
     sbi_set_timer(10000000 + curret_time);
 
     void thread_swap_test(void);
-    thread_swap_test();
+    //thread_swap_test();
 }

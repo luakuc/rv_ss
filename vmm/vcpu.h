@@ -102,9 +102,12 @@ typedef struct virtual_cpu
         uint64_t vsatp;
     } vcsr;
 
-    // TODO
-    // uint64_t page_directory
+    // TODO use virtual_address_t and physical_address_t.
+    uint64_t page_directory;
+    uint64_t page_directory_phy;
 
 } virtual_cpu_t;
 
 virtual_cpu_t *alloc_vcpu(void);
+void vcpu_set_pc(virtual_cpu_t* vcpu, uint64_t pc);
+void run_guest(virtual_cpu_t* vcpu);

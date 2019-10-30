@@ -105,6 +105,10 @@ void c_trap_handler(trap_frame_t *trap_frame)
                 break;
             }
             default:
+            {
+                char error_code_str[10];
+                int_to_str(code, error_code_str);
+                put_string(error_code_str);
                 put_string(convert_exception_code_to_string(code));
                 put_string("\nsepc:\t0x");
                 put_string(sepc_str);
@@ -113,6 +117,7 @@ void c_trap_handler(trap_frame_t *trap_frame)
                 put_string("\n");
                 panic("panic");
                 break;
+            }
         }
     }
 }

@@ -28,12 +28,16 @@ enum exception_code
     store_amo_address_misaligned = 6,
     store_amo_access_fault = 7,
     environment_call_from_u = 8,
-    environment_call_from_s = 9,
+    //environment_call_from_s = 9,
+    environment_call_from_hs = 9,
+    environment_call_from_vs = 10,
+    environment_call_from_m = 11,
+
     // 10 and 11 are reserved
     instruction_page_fault = 12,
     load_page_fault = 13,
     // 14 is reserved for future standard use
-    store_amo_page_fault = 16,
+    store_amo_page_fault = 15,
     // over 17 are reserved
 };
 
@@ -80,8 +84,12 @@ char *convert_exception_code_to_string(enum exception_code code)
             return "store_amo_access_fault";
         case environment_call_from_u:
             return "environment_call_from_u";
-        case environment_call_from_s:
-            return "environment_call_from_s";
+        case environment_call_from_hs:
+            return "environment_call_from_hs";
+        case environment_call_from_vs:
+            return "environment_call_from_vs";
+        case environment_call_from_m:
+            return "environment_call_from_m";
         case instruction_page_fault:
             return "instruction_page_fault";
         case load_page_fault:
