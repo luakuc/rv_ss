@@ -55,4 +55,4 @@ $(DISK_IMG):
 	dd if=/dev/zero of=$(DISK_IMG) count=1024
 
 clean:
-	rm -rf $(IMAGE) *.o
+	rm -rf $(IMAGE) *.o $(VMM_OBJS)
