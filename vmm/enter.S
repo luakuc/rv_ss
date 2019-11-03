@@ -32,7 +32,7 @@ switch_to_guest:
 
     csrr t0, sstatus
     sd t0, VCPU_OFFSET_HOST_SSTATUS(a0)
-    csrr t0, hstatus
+    csrr t0, CSR_HSTATUS
     sd t0, VCPU_OFFSET_HOST_HSTATUS(a0)
     csrr t0, sscratch
     sd t0, VCPU_OFFSET_HOST_SSCRATCH(a0)
@@ -45,7 +45,7 @@ switch_to_guest:
     ld t0, VCPU_OFFSET_GUEST_SSTATUS(a0)
     csrw sstatus, t0
     ld t0, VCPU_OFFSET_GUEST_HSTATUS(a0)
-    csrw hstatus, t0
+    csrw CSR_HSTATUS, t0
 
     ld ra, VCPU_OFFSET_GUEST_RA(a0)
     ld sp, VCPU_OFFSET_GUEST_SP(a0)

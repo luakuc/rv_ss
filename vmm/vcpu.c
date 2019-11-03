@@ -24,7 +24,7 @@ static bool init_vcpu(virtual_cpu_t *vcpu)
     vcpu->vcsr.vstvec = csr_read_vstvec();
     vcpu->vcsr.vsatp = csr_read_vsatp();
 
-    vcpu->guest_context.hstatus = HSTATUS_SPV;
+    vcpu->guest_context.hstatus = HSTATUS_SPV | HSTATUS_SP2V | HSTATUS_SP2P;
     vcpu->guest_context.sstatus = SSTATUS_SPP | SSTATUS_SIE;
 
     //TODO
