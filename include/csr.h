@@ -15,4 +15,7 @@
 #define CSR_SIP 0x144
 #define CSR_SATP 0x145
 
-
+#define CSR_HSTATUS		0x600
+#define CSR_HEDELEG		0x602
+#define CSR_HIDELEG		0x603
+#define CSR_HGATP		0x680
