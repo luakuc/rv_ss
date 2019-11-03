@@ -85,66 +85,48 @@ uint64_t csr_read_vsatp(void)
     return vscause;
 }
 
-uint64_t csr_write_vsstatus(void)
+//for write
+void csr_write_vsstatus(uint64_t value)
 {
-    uint64_t vsstatus;
-    // vsstatus : 0x200
-    __asm__ volatile("csrw 0x200, %0" : : "r"(vsstatus));
-    return vsstatus;
+    __asm__ volatile("csrw 0x200, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vsip(void)
+void csr_write_vsip(uint64_t value)
 {
-    uint64_t vsip;
-    __asm__ volatile("csrw 0x244, %0" : : "r"(vsip));
-    return vsip;
+    __asm__ volatile("csrw 0x244, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vsie(void)
+void csr_write_vsie(uint64_t value)
 {
-    uint64_t vsie;
-    __asm__ volatile("csrw 0x204, %0" : : "r"(vsie));
-    return vsie;
+    __asm__ volatile("csrw 0x204, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vstvec(void)
+void csr_write_vstvec(uint64_t value)
 {
-    uint64_t vstvec;
-    __asm__ volatile("csrw 0x205, %0" : : "r"(vstvec));
-    return vstvec;
+    __asm__ volatile("csrw 0x205, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vsscratch(void)
+void csr_write_vsscratch(uint64_t value)
 {
-    uint64_t vsscratch;
-    __asm__ volatile("csrw 0x240, %0" : : "r"(vsscratch));
-    return vsscratch;
+    __asm__ volatile("csrw 0x240, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vsepc(void)
+void csr_write_vsepc(uint64_t value)
 {
-    uint64_t vsepc;
-    __asm__ volatile("csrw 0x241, %0" : : "r"(vsepc));
-    return vsepc;
+    __asm__ volatile("csrw 0x241, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vscause(void)
+void csr_write_vscause(uint64_t value)
 {
-    uint64_t vscause;
-    __asm__ volatile("csrw 0x280, %0" : : "r"(vscause));
-    return vscause;
+    __asm__ volatile("csrw 0x280, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vstval(void)
+void csr_write_vstval(uint64_t value)
 {
-    uint64_t vstval;
-    __asm__ volatile("csrw 0x243, %0" : : "r"(vstval));
-    return vstval;
+    __asm__ volatile("csrw 0x243, %0" : : "r"(value));
 }
 
-uint64_t csr_write_vsatp(void)
+void csr_write_vsatp(uint64_t value)
 {
-    uint64_t vscause;
-    __asm__ volatile("csrw 0x280, %0" : : "r"(vscause));
-    return vscause;
+    __asm__ volatile("csrw 0x280, %0" : : "r"(value));
 }

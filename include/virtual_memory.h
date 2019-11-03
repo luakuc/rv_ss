@@ -59,4 +59,4 @@ void write_page_table(const page_table_t page_table);
 bool virtual_memory_map(page_table_t page_table, physical_address_t p_address,
                         virtual_address_t v_address, const size_t size,
                         const uint16_t permission);
-
+page_table_t get_kernel_page_table(void);

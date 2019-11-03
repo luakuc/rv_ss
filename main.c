@@ -109,9 +109,10 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
 
     put_string("hello\n");
 
+    void setup_test_guest(virtual_cpu_t* vcpu, uint64_t guest_func);
     //enable_interrupt();
     virtual_cpu_t *vcpu = alloc_vcpu();
-    vcpu_set_pc(vcpu, (uint64_t)guest_func);
+    setup_test_guest(vcpu, guest_func);
     run_guest(vcpu);
 
     panic("finish");

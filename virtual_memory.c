@@ -198,3 +198,8 @@ bool init_virtual_memory(void)
 
     return true;
 }
+
+page_table_t get_kernel_page_table(void)
+{
+    return kernel_root_page_table;
+}
