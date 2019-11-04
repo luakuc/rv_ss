@@ -27,3 +27,6 @@ void csr_write_vsepc(uint64_t value);
 void csr_write_vscause(uint64_t value);
 void csr_write_vstval(uint64_t value);
 void csr_write_vsatp(uint64_t value);
+
+void csr_write_hedeleg(uint64_t value);
+void csr_write_hideleg(uint64_t value);

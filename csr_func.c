@@ -1,4 +1,6 @@
 #include "csr_func.h"
+#include "csr.h"
+#include "string.h"
 
 void csr_write_stvec(uint64_t value)
 {
@@ -130,3 +132,14 @@ void csr_write_vsatp(uint64_t value)
 {
     __asm__ volatile("csrw 0x280, %0" : : "r"(value));
 }
+
+void csr_write_hedeleg(uint64_t value)
+{
+    __asm__ volatile("csrw " TO_STR(CSR_HEDELEG) ", %0" :: "r"(value));
+}
+
+void csr_write_hideleg(uint64_t value)
+{
+    __asm__ volatile ("csrw " TO_STR(CSR_HIDELEG) ", %0":: "r"(value));
+}
+
