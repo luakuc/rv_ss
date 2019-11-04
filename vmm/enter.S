@@ -1,3 +1,4 @@
+#include "csr.h"
 #include "vcpu_offsets.h"
 
 .text

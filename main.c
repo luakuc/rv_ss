@@ -14,6 +14,7 @@
 #include "virtio_mmio.h"
 #include "vmm/vmm.h"
 #include "vmm/vcpu.h"
+#include "sbi.h"
 
 extern const struct memory_map_entry memory_map[];
 
@@ -39,12 +40,7 @@ void kthread_0(void)
 
 void guest_func(void)
 {
-    int count = 0;
-    while(true)
-    {
-        count++;
-        //__asm__ volatile("wfi");
-    }
+    sbi_shutdown();
 }
 
 void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
@@ -108,11 +104,11 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     //init_test_thread(kthread_0);
 
     put_string("hello\n");
+    enable_interrupt();
 
     void setup_test_guest(virtual_cpu_t* vcpu, uint64_t guest_func);
-    //enable_interrupt();
     virtual_cpu_t *vcpu = alloc_vcpu();
-    setup_test_guest(vcpu, guest_func);
+    setup_test_guest(vcpu, (uint64_t)guest_func);
     run_guest(vcpu);
 
     panic("finish");
