@@ -30,3 +30,4 @@ void csr_write_vsatp(uint64_t value);
 
 void csr_write_hedeleg(uint64_t value);
 void csr_write_hideleg(uint64_t value);
+void csr_write_hgatp(uint64_t value);

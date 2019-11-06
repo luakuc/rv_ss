@@ -104,6 +104,10 @@ void c_trap_handler(trap_frame_t *trap_frame)
                 trap_frame->sepc += 0x4;
                 break;
             }
+            case environment_call_from_vs:
+            {
+                break;
+            }
             default:
             {
                 char error_code_str[10];

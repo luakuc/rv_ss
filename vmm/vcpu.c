@@ -72,6 +72,11 @@ void switch_to_guest(virtual_cpu_t* vcpu);
 void run_guest(virtual_cpu_t* vcpu)
 {
     vcpu_load_vcsr(vcpu);
+
+    //TODO
+    //csr_write_hgatp(vcpu->);
+    //hfence.gvma
+
     switch_to_guest(vcpu);
 }
 
@@ -81,6 +86,8 @@ static bool init_vcpu(virtual_cpu_t *vcpu)
 
     vcpu->guest_context.hstatus = HSTATUS_SPV | HSTATUS_SP2V | HSTATUS_SP2P;
     vcpu->guest_context.sstatus = SSTATUS_SPP | SSTATUS_SIE;
+
+    vcpu->hgatp.
 
     //TODO
     return true;

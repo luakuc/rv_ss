@@ -143,3 +143,7 @@ void csr_write_hideleg(uint64_t value)
     __asm__ volatile ("csrw " TO_STR(CSR_HIDELEG) ", %0":: "r"(value));
 }
 
+void csr_write_hgatp(uint64_t value)
+{
+    __asm__ volatile ("csrw " TO_STR(CSR_HGATP) ", %0" :: "r"(value));
+}
