@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#include "guest_address_translation.h"
+#include "virtual_memory.h"
 
 typedef struct virtual_cpu
 {
@@ -84,9 +86,8 @@ typedef struct virtual_cpu
         uint64_t vsatp;
     } vcsr;
 
-    // TODO use virtual_address_t and physical_address_t.
-    hgatp_t hgatp;
-    uint64_t hgatp_phy;
+    page_table_t gp_hp_page_table;
+    page_table_t gp_hp_page_table_phy;
 
 } virtual_cpu_t;
 

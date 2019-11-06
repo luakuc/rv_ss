@@ -15,7 +15,7 @@ static inline uint16_t extract_vpn(const virtual_address_t v_address,
     return (uint16_t)vpn;
 }
 
-static inline page_table_t
+page_table_t
 convert_into_page_table(const page_table_entry_t entry)
 {
     page_table_t result;
@@ -23,7 +23,7 @@ convert_into_page_table(const page_table_entry_t entry)
     return result;
 }
 
-static inline page_table_entry_t
+page_table_entry_t
 convert_into_table_entry(const page_table_t table)
 {
     page_table_entry_t result;

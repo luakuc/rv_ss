@@ -50,6 +50,16 @@ typedef struct sv39_page_table_entry
     };
 } page_table_entry_t;
 
+#define PTE_FLAG_VALID  (1 << 0)
+#define PTE_FLAG_READ   (1 << 1)
+#define PTE_FLAG_WRITE  (1 << 2)
+#define PTE_FLAG_EXEC   (1 << 3)
+#define PTE_FLAG_USER   (1 << 4)
+#define PTE_FLAG_GLOBAL (1 << 5)
+#define PTE_FLAG_ACCESS (1 << 6)
+#define PTE_FLAG_DIRTY  (1 << 7)
+
+
 typedef page_table_entry_t *page_table_t;
 
 extern page_table_t kernel_root_page_table;
@@ -60,3 +70,6 @@ bool virtual_memory_map(page_table_t page_table, physical_address_t p_address,
                         virtual_address_t v_address, const size_t size,
                         const uint16_t permission);
 page_table_t get_kernel_page_table(void);
+page_table_entry_t convert_into_table_entry(const page_table_t table);
+page_table_t convert_into_page_table(const page_table_entry_t entry);
+
