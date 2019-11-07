@@ -15,16 +15,14 @@ static inline uint16_t extract_vpn(const virtual_address_t v_address,
     return (uint16_t)vpn;
 }
 
-page_table_t
-convert_into_page_table(const page_table_entry_t entry)
+page_table_t convert_into_page_table(const page_table_entry_t entry)
 {
     page_table_t result;
     result = (page_table_t)(((uint64_t)entry.value >> 10) << 12);
     return result;
 }
 
-page_table_entry_t
-convert_into_table_entry(const page_table_t table)
+page_table_entry_t convert_into_table_entry(const page_table_t table)
 {
     page_table_entry_t result;
     result.value = ((uint64_t)table >> 12) << 10;
@@ -85,8 +83,7 @@ bool virtual_memory_map(page_table_t page_table, physical_address_t p_address,
 
     while (true)
     {
-        page_table_entry_t *entry =
-            page_walk(page_table, v_address);
+        page_table_entry_t *entry = page_walk(page_table, v_address);
         if (entry == NULL)
         {
             return false;
@@ -182,24 +179,24 @@ bool init_virtual_memory(void)
     memory_set(kernel_root_page_table, 0x00, sizeof(page_table_t) * 512);
 
     // DRAM
-    map_kernel_virtual_memory(0x80000000, 0x80000000, 0x800000, 0b1111);
+    map_kernel_virtual_memory(0x80000000, 0x80000000, 0x800000,
+                              PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
 
     // PLIC
-    map_kernel_virtual_memory(0xc000000, 0xc000000, 0x4000000, 0b0110);
+    map_kernel_virtual_memory(0xc000000, 0xc000000, 0x4000000,
+                              PTE_FLAG_READ | PTE_FLAG_WRITE);
 
     // UART
     map_kernel_virtual_memory(0x10000000, 0x10000000, (0x100 + 0xfff) & -0x1000,
-                              0b0110);
+                              PTE_FLAG_READ | PTE_FLAG_WRITE);
 
     // virtio
-    map_kernel_virtual_memory(0x10001000, 0x10001000, (0x1000), 0b0110);
+    map_kernel_virtual_memory(0x10001000, 0x10001000, (0x1000),
+                              PTE_FLAG_READ | PTE_FLAG_WRITE);
 
     write_page_table(kernel_root_page_table);
 
     return true;
 }
 
-page_table_t get_kernel_page_table(void)
-{
-    return kernel_root_page_table;
-}
+page_table_t get_kernel_page_table(void) { return kernel_root_page_table; }
