@@ -31,3 +31,4 @@ bool guest_memory_map(page_table_t root, uint64_t guest_physical,
                       uint64_t host_phisical, size_t size, uint16_t permission);
 
 void hfence_gvma(void);
+void hfence_bvma(void);

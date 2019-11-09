@@ -1,6 +1,6 @@
 .text
 
-.globl hfence_gvma
+.globl hfence_gvma, hfence_bvma
 
 // funct7(hfence.gvma), rs2(vmid), rs1(gaddr), funct3(priv), rd(0), opcode(system)
 // - opecode[7] : system (1110011)
@@ -16,4 +16,8 @@
 
 hfence_gvma:
     .word 0x62000073 // 0110001,00000,00000,000,00000,1110011
+    ret
+
+hfence_bvma:
+    .word 0x22000073
     ret
