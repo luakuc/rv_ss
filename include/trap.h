@@ -60,6 +60,7 @@ typedef struct trap_frame
     uint64_t sscratch;
     uint64_t kernel_sp;
     uint64_t sp;
+    uint64_t hstatus;
 } trap_frame_t;
 
 bool init_trap(uint64_t cpu_id);

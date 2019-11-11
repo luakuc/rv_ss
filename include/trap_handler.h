@@ -41,4 +41,5 @@
 #define TF_SSCRATCH_OFFSET 272
 #define TF_KERNEL_SP_OFFSET 280
 #define TF_SP_OFFSET 288
-#define TF_SIZE 296
+#define TF_HSTATUS 296
+#define TF_SIZE 304
