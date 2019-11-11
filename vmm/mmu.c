@@ -1,4 +1,4 @@
-#include "guest_address_translation.h"
+#include "mmu.h"
 #include "csr_func.h"
 #include "memory_manager.h"
 
@@ -6,7 +6,7 @@ static uint16_t extract_vpn_sv39_x4(const virtual_address_t v_address,
                                     const int level)
 {
     const size_t offset = 12;
-    const uint64_t mask = level == 2 ? 0x3ff : 0x1ff;
+    const uint64_t mask = level == 2 ? 0x7ff : 0x1ff;
 
     size_t shift_amount = offset + 9 * level;
 

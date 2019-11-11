@@ -40,6 +40,10 @@ void kthread_0(void)
 
 void guest_func(void)
 {
+    static int a = 0;
+    while(true) {
+        a++;
+    }
     sbi_shutdown();
 }
 
@@ -104,14 +108,14 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     //init_test_thread(kthread_0);
 
     put_string("hello\n");
-    enable_interrupt();
+    //enable_interrupt();
 
     void setup_test_guest(virtual_cpu_t* vcpu, uint64_t guest_func);
     virtual_cpu_t *vcpu = alloc_vcpu();
     setup_test_guest(vcpu, (uint64_t)guest_func);
     run_guest(vcpu);
 
-    panic("finish");
+    //panic("finish");
 
     while(true) {
         count_main++;

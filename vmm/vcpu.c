@@ -1,11 +1,11 @@
 #include "vcpu.h"
 #include "csr_func.h"
-#include "guest_address_translation.h"
 #include "memory_manager.h"
+#include "mmu.h"
 #include "register.h"
 #include "string.h"
-#include "virtual_memory.h"
 #include "trap.h"
+#include "virtual_memory.h"
 
 #define HSTATUS_SPRV (0x1 << 0)
 #define HSTATUS_SP2V (0x1 << 7)
@@ -28,17 +28,16 @@ void vcpu_set_sp(virtual_cpu_t *vcpu, uint64_t sp)
 
 bool setup_test_guest(virtual_cpu_t *vcpu, uint64_t guest_func)
 {
-    page_table_t kernel_page_table = get_kernel_page_table();
+    // page_table_t kernel_page_table = get_kernel_page_table();
 
-    satp_t satp;
-
-    uint64_t ppn = ((uint64_t)kernel_page_table) >> 12;
-    satp.ppn = ppn;
-    satp.mode = SATP_MODE_SV39;
-    satp.asid = 0;
-
-    //vcpu->vcsr.vsatp = satp.value;
+    // satp_t satp;
+    // uint64_t ppn = ((uint64_t)kernel_page_table) >> 12;
+    // satp.ppn = ppn;
+    // satp.mode = SATP_MODE_SV39;
+    // satp.asid = 0;
+    // vcpu->vcsr.vsatp = satp.value;
     vcpu->vcsr.vsatp = 0;
+
     vcpu->vcsr.vsstatus = 0x8000000000006000;
 
     uint64_t sp = (uint64_t)kalloc_4k();
@@ -47,32 +46,28 @@ bool setup_test_guest(virtual_cpu_t *vcpu, uint64_t guest_func)
         return false;
     }
 
-    bool result = guest_memory_map(
-        vcpu->gp_hp_page_table, 0x80000000, 0x80000000, 0x800000,
-        PTE_FLAG_USER | PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
+    bool result =
+        guest_memory_map(vcpu->gp_hp_page_table, sp, sp, 0x1000,
+                         PTE_FLAG_USER | PTE_FLAG_READ | PTE_FLAG_WRITE);
     if (!result)
     {
         return false;
     }
 
-    //bool result = guest_memory_map(vcpu->gp_hp_page_table, sp, sp, 0x1000,
-    //                          PTE_FLAG_READ | PTE_FLAG_WRITE);
-    //if (!result)
-    //{
-    //    return false;
-    //}
-
+    // setup stackpointer for guest
     sp += 0x1000 - 0x10;
     vcpu_set_sp(vcpu, sp);
 
+    // guest pc(entry point)
     vcpu_set_pc(vcpu, (uint64_t)guest_func);
-    //result = guest_memory_map(vcpu->gp_hp_page_table, (uint64_t)guest_func,
-    //                          (uint64_t)guest_func, 0x1000,
-    //                          PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
-    //if (!result)
-    //{
-    //    return false;
-    //}
+
+    result = guest_memory_map(
+        vcpu->gp_hp_page_table, (uint64_t)guest_func & -0x1000, (uint64_t)guest_func & -0x1000,
+        0x1000, PTE_FLAG_USER | PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
+    if (!result)
+    {
+        return false;
+    }
 
     return true;
 }
@@ -102,7 +97,7 @@ void vcpu_load_vcsr(virtual_cpu_t *vcpu)
     csr_write_vstvec(vcpu->vcsr.vstvec);
     csr_write_vsatp(vcpu->vcsr.vsatp);
 
-    //hfence_bvma();
+    // hfence_bvma();
 }
 
 void switch_to_guest(virtual_cpu_t *vcpu);

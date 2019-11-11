@@ -92,8 +92,10 @@ void c_trap_handler(trap_frame_t *trap_frame)
         // exception
         char sepc_str[65];
         char stval_str[65];
+        char hstatus_str[65];
         int_to_str(trap_frame->sepc, sepc_str);
         int_to_str(trap_frame->stval, stval_str);
+        int_to_str(trap_frame->hstatus, hstatus_str);
         switch (code)
         {
             case environment_call_from_u:
@@ -114,10 +116,15 @@ void c_trap_handler(trap_frame_t *trap_frame)
                 int_to_str(code, error_code_str);
                 put_string(error_code_str);
                 put_string(convert_exception_code_to_string(code));
-                put_string("\nsepc:\t0x");
+                put_string("\n");
+                put_string("sepc:\t0x");
                 put_string(sepc_str);
-                put_string("\nstval:\t0x");
+                put_string("\n");
+                put_string("stval:\t0x");
                 put_string(stval_str);
+                put_string("\n");
+                put_string("hstatus:\t0x");
+                put_string(hstatus_str);
                 put_string("\n");
                 panic("panic");
                 break;

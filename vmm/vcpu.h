@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-#include "guest_address_translation.h"
+#include "mmu.h"
 #include "virtual_memory.h"
 
 typedef struct virtual_cpu

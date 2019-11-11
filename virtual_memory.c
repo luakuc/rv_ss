@@ -27,6 +27,7 @@ page_table_entry_t convert_into_table_entry(const page_table_t table)
     page_table_entry_t result;
     result.value = ((uint64_t)table >> 12) << 10;
     result.fields.access_control.valid = 1;
+
     return result;
 }
 
