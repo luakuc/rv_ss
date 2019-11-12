@@ -1,0 +1,6 @@
+[submodule "riscv-gnu-toolchain"]
+	path = riscv-gnu-toolchain
+	url = https://github.com/riscv/riscv-gnu-toolchain
+[submodule "opensbi"]
+	path = opensbi
+	url = https://github.com/riscv/opensbi
