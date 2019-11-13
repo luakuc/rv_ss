@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 
+// SBI specs: https://github.com/riscv/riscv-sbi-doc/blob/master/riscv-sbi.adoc
 static inline void sbi_set_timer(uint64_t stime_value)
 {
     __asm__ volatile(

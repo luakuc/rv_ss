@@ -31,3 +31,6 @@ $ cd riscv-gnu-toolchain
 $ #wip 
 ```
 WIP
+./configure --prefix=/home/hima/work/riscvos/../local
+make PLATFORM=qemu/virt I=../local install
+export CROSS_COMPILE=riscv64-unknown-elf-
