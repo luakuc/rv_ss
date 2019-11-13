@@ -15,6 +15,7 @@
 #include "vmm/vmm.h"
 #include "vmm/vcpu.h"
 #include "sbi.h"
+#include "fdt.h"
 
 extern const struct memory_map_entry memory_map[];
 
@@ -50,6 +51,12 @@ void guest_func(void)
 void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
 {
     bool result;
+    result = init_fdt(device_tree_base);
+    if(!result)
+    {
+        //panic("failed the init_fdt");
+    }
+
     result = init_memory_manager(memory_map);
     if(!result)
     {
