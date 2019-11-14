@@ -1,5 +1,6 @@
 #include "string.h"
 
+//TODO return value
 void *memory_set(void *destination, uint8_t byte, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
@@ -8,6 +9,7 @@ void *memory_set(void *destination, uint8_t byte, size_t size)
     }
 }
 
+//TODO return value
 void *memory_copy(void *destination, void *source, size_t size)
 {
     for (size_t i = 0; i < size; ++i)

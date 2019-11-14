@@ -51,16 +51,17 @@ void guest_func(void)
 void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
 {
     bool result;
-    result = init_fdt(device_tree_base);
-    if(!result)
-    {
-        //panic("failed the init_fdt");
-    }
 
     result = init_memory_manager(memory_map);
     if(!result)
     {
         panic("failed the init_memory_manager");
+    }
+
+    result = init_fdt(device_tree_base);
+    if(!result)
+    {
+        //panic("failed the init_fdt");
     }
 
     result = init_trap(hart_id);
