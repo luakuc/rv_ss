@@ -72,9 +72,9 @@ void create_user_process(uint64_t entry_address)
     result =
         virtual_memory_map(page_table, (physical_address_t)thread_stack,
                            (virtual_address_t)thread_stack, 0x1000, 0b11111);
-    if(!result)
+    if (!result)
     {
-        //TODO
+        // TODO
     }
 
     new_thread->page_table = page_table;

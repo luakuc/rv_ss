@@ -1,7 +1,8 @@
 #include "vmm.h"
-#include "vcpu.h"
-#include "exception.h"
 #include "csr_func.h"
+#include "exception.h"
+#include "fdt.h"
+#include "vcpu.h"
 
 static void setup_hypervisor_deleg_csr(void)
 {
@@ -31,6 +32,7 @@ static void setup_hypervisor_deleg_csr(void)
 
 bool init_vmm(void)
 {
+
     setup_hypervisor_deleg_csr();
 
     return true;

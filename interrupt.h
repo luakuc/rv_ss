@@ -6,7 +6,7 @@
 enum irq_numbers
 {
     uart_0 = 0xa,
-    //TODO
+    // TODO
 };
 
 bool handle_external_interrupt(uint64_t irq);

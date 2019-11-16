@@ -3,8 +3,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
-#include "trap_handler.h"
 #include "register.h"
+#include "trap_handler.h"
 
 typedef struct scause
 {
@@ -23,8 +23,8 @@ typedef struct trap_frame
 {
     uint64_t ra;
     uint64_t gp;
-    //uint64_t tp;
-    thread_info_t* tp;
+    // uint64_t tp;
+    thread_info_t *tp;
     uint64_t t0;
     uint64_t t1;
     uint64_t t2;

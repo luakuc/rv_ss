@@ -1,21 +1,20 @@
-#include <stdint.h>
 #include <stdbool.h>
+#include <stdint.h>
 
-#include "memory_map.h"
-#include "plic.h"
-#include "trap.h"
-#include "uart.h"
-#include "sbi.h"
-#include "timer.h"
-#include "utils.h"
+#include "fdt.h"
 #include "io_interface.h"
 #include "memory_manager.h"
-#include "virtual_memory.h"
-#include "virtio_mmio.h"
-#include "vmm/vmm.h"
-#include "vmm/vcpu.h"
+#include "memory_map.h"
+#include "plic.h"
 #include "sbi.h"
-#include "fdt.h"
+#include "timer.h"
+#include "trap.h"
+#include "uart.h"
+#include "utils.h"
+#include "virtio_mmio.h"
+#include "virtual_memory.h"
+#include "vmm/vcpu.h"
+#include "vmm/vmm.h"
 
 extern const struct memory_map_entry memory_map[];
 
@@ -32,7 +31,7 @@ void kthread_0(void)
     write_char_by_uart('d');
     write_char_by_uart('\n');
 
-    while(true)
+    while (true)
     {
         count_kthread++;
         __asm__ volatile("wfi");
@@ -42,7 +41,8 @@ void kthread_0(void)
 void guest_func(void)
 {
     static int a = 0;
-    while(true) {
+    while (true)
+    {
         a++;
     }
     sbi_shutdown();
@@ -53,79 +53,78 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     bool result;
 
     result = init_memory_manager(memory_map);
-    if(!result)
+    if (!result)
     {
         panic("failed the init_memory_manager");
     }
 
     result = init_fdt(device_tree_base);
-    if(!result)
+    if (!result)
     {
-        //panic("failed the init_fdt");
+        // panic("failed the init_fdt");
     }
 
     result = init_trap(hart_id);
-    if(!result)
+    if (!result)
     {
         panic("failed the init_trap");
     }
 
     result = init_virtual_memory();
-    if(!result)
+    if (!result)
     {
         panic("failed at init_virtual_memory");
     }
 
     result = init_plic(&memory_map[VIRT_PLIC]);
-    if(!result)
+    if (!result)
     {
         panic("failed the init_plic.");
     }
 
     result = init_uart(&memory_map[VIRT_UART0]);
-    if(!result)
+    if (!result)
     {
         panic("failed the init_uart");
     }
 
     result = init_virtio_mmio(&memory_map[VIRT_VIRTIO]);
-    if(!result)
+    if (!result)
     {
-        put_string(
-                "Failed to initialize virtio devices.\n"
-                "Any virtio devices are disabled\n");
-        //panic("failed the init_virtio");
+        put_string("Failed to initialize virtio devices.\n"
+                   "Any virtio devices are disabled\n");
+        // panic("failed the init_virtio");
     }
 
     result = init_timer();
-    if(!result)
+    if (!result)
     {
         panic("failed the init_timer");
     }
 
     result = init_vmm();
-    if(!result)
+    if (!result)
     {
-        //panic("failed the init_vmm");
-        put_string(
-                "Failed to initialize for virtual machine monitor\n"
-                "The VMM is disabled\n");
+        // panic("failed the init_vmm");
+        put_string("Failed to initialize for virtual machine monitor\n"
+                   "The VMM is disabled\n");
     }
 
-    //void init_test_thread();
-    //init_test_thread(kthread_0);
+    // void init_test_thread();
+    // init_test_thread(kthread_0);
 
     put_string("hello\n");
-    //enable_interrupt();
+    // enable_interrupt();
 
-    void setup_test_guest(virtual_cpu_t* vcpu, uint64_t guest_func);
+    void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
     virtual_cpu_t *vcpu = alloc_vcpu();
     setup_test_guest(vcpu, (uint64_t)guest_func);
     run_guest(vcpu);
 
-    //panic("finish");
+    // panic("finish");
 
-    while(true) {
+    while (true)
+    {
         count_main++;
         __asm__ volatile("wfi");
     }

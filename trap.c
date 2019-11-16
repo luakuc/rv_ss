@@ -4,10 +4,10 @@
 #include "csr_func.h"
 #include "exception.h"
 #include "interrupt.h"
+#include "io_interface.h"
 #include "memory_manager.h"
 #include "plic.h"
 #include "register.h"
-#include "io_interface.h"
 #include "string.h"
 #include "system_call.h"
 #include "timer.h"
@@ -77,9 +77,9 @@ void c_trap_handler(trap_frame_t *trap_frame)
                 uint64_t irq = plic_claim();
 
                 bool result = handle_external_interrupt(irq);
-                if(!result)
+                if (!result)
                 {
-                    //TODO
+                    // TODO
                 }
                 // TODO
                 plic_complete(irq);
@@ -106,7 +106,8 @@ void c_trap_handler(trap_frame_t *trap_frame)
             {
                 uint64_t result = do_system_call(trap_frame);
                 trap_frame->a0 = result;
-                // sepc indicates the ecall instruction address, not the following instruction.
+                // sepc indicates the ecall instruction address, not the
+                // following instruction.
                 trap_frame->sepc += 0x4;
                 break;
             }

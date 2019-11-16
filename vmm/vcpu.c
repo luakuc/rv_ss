@@ -62,8 +62,9 @@ bool setup_test_guest(virtual_cpu_t *vcpu, uint64_t guest_func)
     vcpu_set_pc(vcpu, (uint64_t)guest_func);
 
     result = guest_memory_map(
-        vcpu->gp_hp_page_table, (uint64_t)guest_func & -0x1000, (uint64_t)guest_func & -0x1000,
-        0x1000, PTE_FLAG_USER | PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
+        vcpu->gp_hp_page_table, (uint64_t)guest_func & -0x1000,
+        (uint64_t)guest_func & -0x1000, 0x1000,
+        PTE_FLAG_USER | PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
     if (!result)
     {
         return false;

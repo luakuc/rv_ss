@@ -87,7 +87,7 @@ uint64_t csr_read_vsatp(void)
     return vscause;
 }
 
-//for write
+// for write
 void csr_write_vsstatus(uint64_t value)
 {
     __asm__ volatile("csrw 0x200, %0" : : "r"(value));
@@ -135,15 +135,15 @@ void csr_write_vsatp(uint64_t value)
 
 void csr_write_hedeleg(uint64_t value)
 {
-    __asm__ volatile("csrw " TO_STR(CSR_HEDELEG) ", %0" :: "r"(value));
+    __asm__ volatile("csrw " TO_STR(CSR_HEDELEG) ", %0" ::"r"(value));
 }
 
 void csr_write_hideleg(uint64_t value)
 {
-    __asm__ volatile ("csrw " TO_STR(CSR_HIDELEG) ", %0":: "r"(value));
+    __asm__ volatile("csrw " TO_STR(CSR_HIDELEG) ", %0" ::"r"(value));
 }
 
 void csr_write_hgatp(uint64_t value)
 {
-    __asm__ volatile ("csrw " TO_STR(CSR_HGATP) ", %0" :: "r"(value));
+    __asm__ volatile("csrw " TO_STR(CSR_HGATP) ", %0" ::"r"(value));
 }

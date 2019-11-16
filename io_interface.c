@@ -1,5 +1,5 @@
-#include <stddef.h>
 #include <stdarg.h>
+#include <stddef.h>
 
 #include "io_interface.h"
 #include "uart.h"

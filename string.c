@@ -1,6 +1,6 @@
 #include "string.h"
 
-//TODO return value
+// TODO return value
 void memory_set(void *destination, uint8_t byte, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
@@ -9,7 +9,7 @@ void memory_set(void *destination, uint8_t byte, size_t size)
     }
 }
 
-//TODO return value
+// TODO return value
 void memory_copy(void *destination, void *source, size_t size)
 {
     for (size_t i = 0; i < size; ++i)
@@ -33,7 +33,7 @@ void int_to_str(uint64_t n, char *buffer) //, int radix)
         length++;
     }
 
-    if(length == 0)
+    if (length == 0)
     {
         length = 1;
     }

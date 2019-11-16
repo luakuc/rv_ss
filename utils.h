@@ -2,5 +2,4 @@
 
 #include <stdint.h>
 
-void panic(const char * text);
-
+void panic(const char *text);

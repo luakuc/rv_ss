@@ -2,7 +2,7 @@
 
 #include <stdint.h>
 
-//for RV64
+// for RV64
 #define SSTATUS_UIE (0x1 << 0)
 #define SSTATUS_SIE (0x1 << 1)
 #define SSTATUS_UPIE (0x1 << 4)

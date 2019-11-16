@@ -2,7 +2,8 @@
 
 #include <stdint.h>
 
-enum {
+enum
+{
     VIRT_DEBUG,
     VIRT_MROM,
     VIRT_TEST,
@@ -17,8 +18,8 @@ enum {
     VIRT_MEM_MAP_END,
 };
 
-struct memory_map_entry {
-	uintptr_t base;
+struct memory_map_entry
+{
+    uintptr_t base;
     uintptr_t size;
 };
-

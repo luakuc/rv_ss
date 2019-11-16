@@ -1,7 +1,7 @@
 #pragma once
 
-#include <stdint.h>
 #include "virtual_memory.h"
+#include <stdint.h>
 
 // hgatp MODE field for RV64
 #define HGATP_MODE_BARE (0)
@@ -24,7 +24,7 @@ typedef struct hgatp
 } hgatp_t;
 
 page_table_entry_t *page_walk_sv39x4(const page_table_t root,
-                              const virtual_address_t address);
+                                     const virtual_address_t address);
 
 void update_hgatp(page_table_t table);
 bool guest_memory_map(page_table_t root, uint64_t guest_physical,

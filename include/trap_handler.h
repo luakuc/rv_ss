@@ -3,7 +3,7 @@
 #define TP_USER_SP_OFFSET 0
 #define TP_KERNEL_SP_OFFSET 8
 
-//trap frame offset
+// trap frame offset
 #define TF_RA_OFFSET 0
 #define TF_GP_OFFSET 8
 #define TF_TP_OFFSET 16

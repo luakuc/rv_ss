@@ -3,6 +3,8 @@
 // FDT spec is included in device tree specification.
 // https://www.devicetree.org/specifications/
 
+// virt definition in QEMU: qemu/hw/riscv/virt.c
+
 #include "fdt.h"
 
 #define FDT_HEADER_MAGIC 0xd00dfeed
@@ -39,7 +41,7 @@ typedef struct devicetree
 {
     char *name;
     property_t *properties;
-    struct devicetree* next;
+    struct devicetree *next;
     struct devicetree *subnodes;
 } device_tree_t;
 

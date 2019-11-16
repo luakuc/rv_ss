@@ -14,11 +14,11 @@ bool init_memory_manager(const struct memory_map_entry memory_map[])
     return true;
 }
 
-void* kalloc(const size_t size)
+void *kalloc(const size_t size)
 {
     uint64_t alloc_address = heap_base_address;
     heap_base_address += size;
-    if(heap_base_address > heap_end_address)
+    if (heap_base_address > heap_end_address)
     {
         return NULL;
     }
@@ -26,7 +26,7 @@ void* kalloc(const size_t size)
     return (void *)alloc_address;
 }
 
-void* kalloc_4k(void)
+void *kalloc_4k(void)
 {
     // 4k alignment
     heap_base_address = (heap_base_address + 0x1000 - 1) & -0x1000;
@@ -34,7 +34,7 @@ void* kalloc_4k(void)
     uint64_t alloc_address = heap_base_address;
     heap_base_address += 0x1000;
 
-    if(heap_base_address > heap_end_address)
+    if (heap_base_address > heap_end_address)
     {
         return NULL;
     }
@@ -49,10 +49,10 @@ void *kalloc_16k(void)
     uint64_t alloc_address = heap_base_address;
     heap_base_address += 0x4000;
 
-    if(heap_base_address > heap_end_address)
+    if (heap_base_address > heap_end_address)
     {
         return NULL;
     }
 
-    return (void*)alloc_address;
+    return (void *)alloc_address;
 }

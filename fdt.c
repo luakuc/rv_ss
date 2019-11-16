@@ -1,8 +1,8 @@
 #include "fdt.h"
-#include "memory_manager.h"
-#include "string.h"
 #include "endian.h"
 #include "fdt_core.h"
+#include "memory_manager.h"
+#include "string.h"
 
 static device_tree_t *device_tree;
 
@@ -56,8 +56,8 @@ reach_to_end:
     int offset = 0;
     while (current != NULL)
     {
-        //memory_copy(name + offset, &(current->value), sizeof(uint32_t));
-        *(uint32_t*)(name + offset) = current->value;
+        // memory_copy(name + offset, &(current->value), sizeof(uint32_t));
+        *(uint32_t *)(name + offset) = current->value;
         offset += sizeof(uint32_t);
         current = current->next;
     }
@@ -67,7 +67,7 @@ reach_to_end:
 
 char *get_string(int offset)
 {
-    //int base = offset;
+    // int base = offset;
     char *string;
 
     int offset_diff_from_u32 = offset % sizeof(uint32_t);
@@ -83,7 +83,7 @@ char *get_string(int offset)
         for (int i = 0; i < sizeof(uint32_t); ++i)
         {
             length++;
-            if(length <= 0 )
+            if (length <= 0)
             {
                 continue;
             }
@@ -111,7 +111,7 @@ got_length:
         for (int i = 0; i < sizeof(uint32_t); ++i)
         {
             length++;
-            if(length <= 0 )
+            if (length <= 0)
             {
                 continue;
             }
@@ -140,7 +140,7 @@ property_t *parse_property(int *index)
 
     int number_of_words = (info.len + sizeof(uint32_t) - 1) / sizeof(uint32_t);
 
-    uint32_t *value = (uint32_t*)kalloc(sizeof(uint32_t) * number_of_words);
+    uint32_t *value = (uint32_t *)kalloc(sizeof(uint32_t) * number_of_words);
     if (!value)
     {
         return NULL;
@@ -167,18 +167,18 @@ property_t *parse_property(int *index)
     return prop;
 }
 
-static void append_subnode(device_tree_t* dt, device_tree_t* subnode)
+static void append_subnode(device_tree_t *dt, device_tree_t *subnode)
 {
-    if(dt->subnodes == NULL)
+    if (dt->subnodes == NULL)
     {
         dt->subnodes = subnode;
         subnode->next = NULL;
         return;
     }
 
-    device_tree_t* current = dt->subnodes;
+    device_tree_t *current = dt->subnodes;
 
-    while(current->next)
+    while (current->next)
     {
         current = current->next;
     }
@@ -187,17 +187,17 @@ static void append_subnode(device_tree_t* dt, device_tree_t* subnode)
     subnode->next = NULL;
 }
 
-static void append_property(device_tree_t* dt, property_t *prop)
+static void append_property(device_tree_t *dt, property_t *prop)
 {
-    if(dt->properties == NULL)
+    if (dt->properties == NULL)
     {
         dt->properties = prop;
         prop->next = NULL;
         return;
     }
 
-    property_t* current = dt->properties;
-    while(current->next)
+    property_t *current = dt->properties;
+    while (current->next)
     {
         current = current->next;
     }
@@ -228,8 +228,8 @@ device_tree_t *parse_node(int *index)
         {
             case FDT_BEGIN_NODE:
             {
-                device_tree_t* subnode = parse_node(index);
-                if(!subnode)
+                device_tree_t *subnode = parse_node(index);
+                if (!subnode)
                 {
                     return NULL;
                 }
@@ -243,7 +243,7 @@ device_tree_t *parse_node(int *index)
             case FDT_PROP:
             {
                 property_t *prop = parse_property(index);
-                if(!prop)
+                if (!prop)
                 {
                     return NULL;
                 }
@@ -264,7 +264,7 @@ close_node:
     return dt;
 }
 
-property_t* get_property(const char* node_path, const char* prop_name)
+property_t *get_property(const char *node_path, const char *prop_name)
 {
 
     // e.g. node_path: "/cpus/cpus@0", prop_name: "riscv,isa"
@@ -281,12 +281,12 @@ bool init_fdt(uint64_t fdt_base)
         return false;
     }
 
-    //uint32_t totalsize = big2little_32(header->totalsize);
+    // uint32_t totalsize = big2little_32(header->totalsize);
     uint32_t offset_to_struct = big2little_32(header->off_dt_struct);
     uint32_t offset_to_string = big2little_32(header->off_dt_strings);
     uint32_t offset_to_memory = big2little_32(header->off_mem_rsvmap);
 
-    memory_block = (fdt_reserve_entry_t*)(fdt_base + offset_to_memory);
+    memory_block = (fdt_reserve_entry_t *)(fdt_base + offset_to_memory);
 
     struct_block = (fdt_struct_entry_t *)(fdt_base + offset_to_struct);
 
@@ -303,7 +303,7 @@ bool init_fdt(uint64_t fdt_base)
     }
 
     device_tree = parse_node(&index);
-    if(device_tree == NULL)
+    if (device_tree == NULL)
     {
         return false;
     }

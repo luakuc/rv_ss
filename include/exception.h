@@ -28,7 +28,7 @@ enum exception_code
     store_amo_address_misaligned = 6,
     store_amo_access_fault = 7,
     environment_call_from_u = 8,
-    //environment_call_from_s = 9,
+    // environment_call_from_s = 9,
     environment_call_from_hs = 9,
     environment_call_from_vs = 10,
     environment_call_from_m = 11,

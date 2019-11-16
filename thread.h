@@ -33,6 +33,5 @@ typedef struct thread_struct
     page_table_t page_table;
 } thread_struct_t;
 
-
 thread_struct_t *create_kernel_thread(uint64_t entry_address);
 void task_switch(thread_struct_t *prev_thread, thread_struct_t *next_thread);
