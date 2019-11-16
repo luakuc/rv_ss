@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdarg.h>
 
-#include "stdio.h"
+#include "io_interface.h"
 #include "uart.h"
 
 void put_char(char c) { write_char_by_uart(c); }
