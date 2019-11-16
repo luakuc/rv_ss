@@ -1,7 +1,9 @@
 #include "vmm.h"
 #include "csr_func.h"
+#include "endian.h"
 #include "exception.h"
 #include "fdt.h"
+#include "memory_manager.h"
 #include "vcpu.h"
 
 static void setup_hypervisor_deleg_csr(void)
@@ -32,13 +34,58 @@ static void setup_hypervisor_deleg_csr(void)
 
 bool init_vmm(void)
 {
-    property_t *prop = get_property("/cpus/cpu@0", "riscv,isa");
-    if(!prop)
+    const char *name = "riscv,isa";
+    property_t *prop = get_property("/cpus/cpu@0", name);
+    if (!prop)
+    {
+        return false;
+    }
+    // The ISA format is "rv64IMA..."
+    // More details are in a riscv_isa_string function at
+    // QEMU/target/riscv/cpu.c
+
+    char *isa = (char *)kalloc(prop->len * sizeof(uint32_t) + 1);
+    if (!isa)
     {
         return false;
     }
 
-    //TODO check extension 'H' in property.
+    for (int i = 0; i < prop->len; ++i)
+    {
+        uint32_t tmp = prop->value[i];
+        uint32_t str_32 = big2little_32(tmp);
+
+        for (int j = 0; j < 4; ++j)
+        {
+            size_t index = i * sizeof(uint32_t) + j;
+            isa[index] = (str_32 >> (8 * j)) & 0xff;
+            if (isa[index] == '\0')
+            {
+                goto got_isa;
+            }
+        }
+    }
+
+    // cannot find ISA from the device tree.
+    return false;
+
+got_isa:
+{
+    // TODO check extension 'H' in property.
+    bool exist_h_extention = false;
+    for (int i = 0; isa[i]; ++i)
+    {
+        if (isa[i] == 'h')
+        {
+            exist_h_extention = true;
+        }
+    }
+
+    if (!exist_h_extention)
+    {
+        return false;
+    }
+}
 
     setup_hypervisor_deleg_csr();
 

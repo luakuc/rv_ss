@@ -264,9 +264,9 @@ close_node:
     return dt;
 }
 
-device_tree_t* search_node(device_tree_t* dt, const char* node_path)
+device_tree_t *search_node(device_tree_t *dt, const char *node_path)
 {
-    if(node_path[0] != '/')
+    if (node_path[0] != '/')
     {
         return NULL;
     }
@@ -274,27 +274,27 @@ device_tree_t* search_node(device_tree_t* dt, const char* node_path)
     // e.g. "/cpus/cpu@0"
     bool is_continue = false;
     int length = 0;
-    for(; node_path[length]; ++length)
+    for (; node_path[length]; ++length)
     {
         char c = node_path[length + 1]; // 1 means a "/"
-        if(c == '/')
+        if (c == '/')
         {
             is_continue = true;
             break;
         }
-        //if(c == '\0')
+        // if(c == '\0')
         //{
         //    break;
         //}
     }
 
-    device_tree_t* current = dt->subnodes;
-    while(current)
+    device_tree_t *current = dt->subnodes;
+    while (current)
     {
         bool result = string_compare(&node_path[1], current->name, length);
-        if(result)
+        if (result)
         {
-            if(is_continue)
+            if (is_continue)
             {
                 return search_node(current, &node_path[length + 1]);
             }
@@ -310,13 +310,28 @@ device_tree_t* search_node(device_tree_t* dt, const char* node_path)
 }
 
 property_t *get_property(const char *node_path, const char *prop_name)
-{
 
+{
     // e.g. node_path: "/cpus/cpu@0", prop_name: "riscv,isa"
-    device_tree_t* dt = search_node(device_tree, node_path);
-    if(dt == NULL)
+    device_tree_t *dt = search_node(device_tree, node_path);
+    if (dt == NULL)
     {
         return NULL;
+    }
+
+    property_t *current = dt->properties;
+    size_t prop_len = string_length(prop_name);
+    while (current)
+    {
+        size_t name_len = string_length(current->name);
+        size_t length = prop_len > name_len ? prop_len : name_len;
+
+        bool result = string_compare(prop_name, current->name, length);
+        if (result)
+        {
+            return current;
+        }
+        current = current->next;
     }
 
     return NULL;

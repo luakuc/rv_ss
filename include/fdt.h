@@ -8,7 +8,7 @@ typedef struct property
 {
     struct property *next;
     uint32_t *value;
-    size_t len;
+    size_t len; // number of words
     char *name;
 } property_t;
 

@@ -18,25 +18,34 @@ void memory_copy(void *destination, void *source, size_t size)
     }
 }
 
-bool string_compare(const char* str_1, const char* str_2, const size_t size)
+bool string_compare(const char *str_1, const char *str_2, const size_t size)
 {
-    if(!str_1 || !str_2)
+    if (!str_1 || !str_2)
     {
         return false;
     }
 
-    for(int i=0; i<size; ++i)
+    for (int i = 0; i < size; ++i)
     {
-        if(str_1[i] != str_2[i])
+        if (str_1[i] != str_2[i])
         {
             return false;
         }
 
-        //TODO
-        //if(str_1[i] == '\0' || str_2[i] == '\0') { }
+        // TODO
+        // if(str_1[i] == '\0' || str_2[i] == '\0') { }
     }
 
     return true;
+}
+
+size_t string_length(const char *str)
+{
+    int length = 0;
+    for (length = 0; str[length]; ++length)
+    {
+    }
+    return length;
 }
 
 static const char hex_map[] = {
