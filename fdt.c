@@ -264,10 +264,61 @@ close_node:
     return dt;
 }
 
+device_tree_t* search_node(device_tree_t* dt, const char* node_path)
+{
+    if(node_path[0] != '/')
+    {
+        return NULL;
+    }
+
+    // e.g. "/cpus/cpu@0"
+    bool is_continue = false;
+    int length = 0;
+    for(; node_path[length]; ++length)
+    {
+        char c = node_path[length + 1]; // 1 means a "/"
+        if(c == '/')
+        {
+            is_continue = true;
+            break;
+        }
+        //if(c == '\0')
+        //{
+        //    break;
+        //}
+    }
+
+    device_tree_t* current = dt->subnodes;
+    while(current)
+    {
+        bool result = string_compare(&node_path[1], current->name, length);
+        if(result)
+        {
+            if(is_continue)
+            {
+                return search_node(current, &node_path[length + 1]);
+            }
+            else
+            {
+                return current;
+            }
+        }
+        current = current->next;
+    }
+
+    return NULL;
+}
+
 property_t *get_property(const char *node_path, const char *prop_name)
 {
 
-    // e.g. node_path: "/cpus/cpus@0", prop_name: "riscv,isa"
+    // e.g. node_path: "/cpus/cpu@0", prop_name: "riscv,isa"
+    device_tree_t* dt = search_node(device_tree, node_path);
+    if(dt == NULL)
+    {
+        return NULL;
+    }
+
     return NULL;
 }
 

@@ -32,6 +32,13 @@ static void setup_hypervisor_deleg_csr(void)
 
 bool init_vmm(void)
 {
+    property_t *prop = get_property("/cpus/cpu@0", "riscv,isa");
+    if(!prop)
+    {
+        return false;
+    }
+
+    //TODO check extension 'H' in property.
 
     setup_hypervisor_deleg_csr();
 
