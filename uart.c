@@ -50,7 +50,7 @@ bool init_uart(const struct memory_map_entry* uart_entry)
 
 void write_char_by_uart(char c)
 {
-    while(register_read(LINE_STATUS_REGISTER) & (1 << 5) == 0);
+    while((register_read(LINE_STATUS_REGISTER) & (1 << 5)) == 0);
     register_write(TRANSMIT_HOLDING_REGISTER, c);
 }
 

@@ -77,6 +77,10 @@ void c_trap_handler(trap_frame_t *trap_frame)
                 uint64_t irq = plic_claim();
 
                 bool result = handle_external_interrupt(irq);
+                if(!result)
+                {
+                    //TODO
+                }
                 // TODO
                 plic_complete(irq);
                 // TODO

@@ -36,8 +36,9 @@ enum device_type
 
 static bool init_virtio_block(const uintptr_t base)
 {
-    uint32_t status = *(uint32_t *)(base + STATUS);
+    //uint32_t status = *(uint32_t *)(base + STATUS);
     // TODO
+    return false;
 }
 
 bool init_virtio_mmio(const struct memory_map_entry *memory_map_entry)
@@ -59,7 +60,7 @@ bool init_virtio_mmio(const struct memory_map_entry *memory_map_entry)
 
     uint32_t device_id = *(uint32_t *)(base + DEVICE_ID);
 
-    uint32_t vendor_id = *(uint32_t *)(base + VENDOR_ID);
+    //uint32_t vendor_id = *(uint32_t *)(base + VENDOR_ID);
 
     switch (device_id)
     {

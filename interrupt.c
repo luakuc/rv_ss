@@ -10,6 +10,10 @@ bool handle_external_interrupt(uint64_t irq)
             //debug
             uint8_t c;
             bool result = read_char_by_uart(&c);
+            if(!result)
+            {
+                //TODO
+            }
             write_char_by_uart((char)c);
             break;
         }

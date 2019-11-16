@@ -16,7 +16,7 @@ bool init_plic(const struct memory_map_entry* plic_entry)
 {
     uintptr_t priority_register = SIFIVE_PLIC_PRIORITY_BASE;
     uintptr_t enable_register = SIFIVE_PLIC_S_ENABLE_BASE;
-    uintptr_t priority_thresholds = SIFIVE_PLIC_PRIORITY_THRESHOLD;
+    //uintptr_t priority_thresholds = SIFIVE_PLIC_PRIORITY_THRESHOLD;
     //uint32_t* claim_complete = (uint32_t*)SIFIVE_PLIC_CLAIM_COMPLETE;
 
     uint32_t *address = (uint32_t*)(priority_register + 10 * 4);
