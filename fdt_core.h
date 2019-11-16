@@ -3,6 +3,8 @@
 // FDT spec is included in device tree specification.
 // https://www.devicetree.org/specifications/
 
+#include "fdt.h"
+
 #define FDT_HEADER_MAGIC 0xd00dfeed
 
 #define FDT_BEGIN_NODE 0x00000001
@@ -32,13 +34,6 @@ typedef struct memory_reserved_entry
 } fdt_reserve_entry_t;
 
 typedef uint32_t fdt_struct_entry_t;
-
-typedef struct property
-{
-    struct property *next;
-    uint32_t *value;
-    char *name;
-} property_t;
 
 typedef struct devicetree
 {

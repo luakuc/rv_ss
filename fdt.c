@@ -12,7 +12,6 @@ static char *string_block;
 
 char *get_next_name(int *index)
 {
-
     struct list
     {
         uint32_t value;
@@ -163,6 +162,7 @@ property_t *parse_property(int *index)
     prop->next = NULL;
     prop->value = value;
     prop->name = get_string(info.nameoff);
+    prop->len = number_of_words;
 
     return prop;
 }
@@ -262,6 +262,13 @@ device_tree_t *parse_node(int *index)
 
 close_node:
     return dt;
+}
+
+property_t* get_property(const char* node_path, const char* prop_name)
+{
+
+    // e.g. node_path: "/cpus/cpus@0", prop_name: "riscv,isa"
+    return NULL;
 }
 
 bool init_fdt(uint64_t fdt_base)
