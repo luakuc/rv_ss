@@ -6,6 +6,7 @@ This is a experiment project for RISC-V(RV64) system programming.
     - WIP
 
 ##### features
+- FDT parser
 - MMU driver
     - host virtual address into host physical address
 - PLIC (RISC-V interrupt controller) driver
