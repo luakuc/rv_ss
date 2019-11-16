@@ -8,7 +8,7 @@
 #include "sbi.h"
 #include "timer.h"
 #include "utils.h"
-#include "stdio.h"
+#include "io_interface.h"
 #include "memory_manager.h"
 #include "virtual_memory.h"
 #include "virtio_mmio.h"

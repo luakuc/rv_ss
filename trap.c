@@ -7,7 +7,7 @@
 #include "memory_manager.h"
 #include "plic.h"
 #include "register.h"
-#include "stdio.h"
+#include "io_interface.h"
 #include "string.h"
 #include "system_call.h"
 #include "timer.h"
