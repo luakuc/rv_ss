@@ -7,14 +7,16 @@
 #include "trap.h"
 #include "virtual_memory.h"
 
-#define HSTATUS_SPRV (0x1 << 0)
-#define HSTATUS_SP2V (0x1 << 7)
-#define HSTATUS_SP2P (0x1 << 8)
-#define HSTATUS_STL (0x1 << 9)
-#define HSTATUS_SPV (0x1 << 10)
-#define HSTATUS_VTVM (0x1 << 20)
-#define HSTATUS_VTW (0x1 << 21)
-#define HSTATUS_VTSR (0x1 << 22)
+// A details of the hstatus bits are defined in hypervisor branch of the
+// riscv/riscv-isa-manual on GitHub, but different from the QEMU implementation.
+// The following definitions refer to the QEMU.
+#define HSTATUS_SPRV 0x00000001
+#define HSTATUS_STL 0x00000040
+#define HSTATUS_SPV 0x00000080
+#define HSTATUS_SP2P 0x00000100
+#define HSTATUS_SP2V 0x00000200
+#define HSTATUS_VTVM 0x00100000
+#define HSTATUS_VTSR 0x00400000
 
 void vcpu_set_pc(virtual_cpu_t *vcpu, uint64_t pc)
 {
