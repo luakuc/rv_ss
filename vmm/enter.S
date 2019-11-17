@@ -76,6 +76,7 @@ switch_to_guest:
     ld a0, VCPU_OFFSET_GUEST_A0(a0)
 
     //TODO setup the stvec to return HS-mode from VS-mode
+    // ↑ Is it require?
 
     // enter the guest
     // pc <- sstatus.sepc
