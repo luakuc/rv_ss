@@ -93,4 +93,5 @@ typedef struct virtual_cpu
 
 virtual_cpu_t *alloc_vcpu(void);
 void vcpu_set_pc(virtual_cpu_t *vcpu, uint64_t pc);
+void vcpu_set_sp(virtual_cpu_t *vcpu, uint64_t sp);
 void run_guest(virtual_cpu_t *vcpu);
