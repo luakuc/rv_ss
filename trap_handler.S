@@ -11,6 +11,7 @@ trap_handler:
     bnez tp, _save_trap_frame
 _trap_from_kernel:
     csrr tp, sscratch
+    sd sp, TP_KERNEL_SP_OFFSET(tp)
 _save_trap_frame:
     sd sp, TP_USER_SP_OFFSET(tp)
     ld sp, TP_KERNEL_SP_OFFSET(tp)
@@ -79,7 +80,10 @@ return_from_exception:
     csrw CSR_HSTATUS, a0
 
     sd sp, TP_KERNEL_SP_OFFSET(tp)
-    csrw sscratch, tp
+
+    // restore user thread pointer
+    sd s0, TF_TP_OFFSET(sp)
+    csrw sscratch, s0
 
     ld ra, TF_RA_OFFSET(sp)
     ld gp, TF_GP_OFFSET(sp)
