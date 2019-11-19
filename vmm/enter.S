@@ -3,6 +3,7 @@
 
 .text
 
+.globl vm_trap_handler
 .globl switch_to_guest
 // void switch_to_guest(virtual_cpu_t* vcpu);
 switch_to_guest:
@@ -31,22 +32,25 @@ switch_to_guest:
     sd s10, VCPU_OFFSET_HOST_S10(a0)
     sd s11, VCPU_OFFSET_HOST_S11(a0)
 
-    csrr t0, sstatus
-    sd t0, VCPU_OFFSET_HOST_SSTATUS(a0)
-    csrr t0, CSR_HSTATUS
-    sd t0, VCPU_OFFSET_HOST_HSTATUS(a0)
-    csrr t0, sscratch
-    sd t0, VCPU_OFFSET_HOST_SSCRATCH(a0)
-    csrr t0, stvec
-    sd t0, VCPU_OFFSET_HOST_STVEC(a0)
+    csrr s0, sstatus
+    sd s0, VCPU_OFFSET_HOST_SSTATUS(a0)
+    csrr s0, CSR_HSTATUS
+    sd s0, VCPU_OFFSET_HOST_HSTATUS(a0)
+    csrr s0, sscratch
+    sd s0, VCPU_OFFSET_HOST_SSCRATCH(a0)
+    csrr s0, stvec
+    sd s0, VCPU_OFFSET_HOST_STVEC(a0)
 
     // restore guest contexts
-    ld t0, VCPU_OFFSET_GUEST_SEPC(a0)
-    csrw sepc, t0
-    ld t0, VCPU_OFFSET_GUEST_SSTATUS(a0)
-    csrw sstatus, t0
-    ld t0, VCPU_OFFSET_GUEST_HSTATUS(a0)
-    csrw CSR_HSTATUS, t0
+    ld s0, VCPU_OFFSET_GUEST_SEPC(a0)
+    csrw sepc, s0
+    ld s0, VCPU_OFFSET_GUEST_SSTATUS(a0)
+    csrw sstatus, s0
+    ld s0, VCPU_OFFSET_GUEST_HSTATUS(a0)
+    csrw CSR_HSTATUS, s0
+
+    la s0, vm_trap_handler
+    csrw stvec, s0
 
     ld ra, VCPU_OFFSET_GUEST_RA(a0)
     ld sp, VCPU_OFFSET_GUEST_SP(a0)
@@ -76,7 +80,6 @@ switch_to_guest:
     ld a0, VCPU_OFFSET_GUEST_A0(a0)
 
     //TODO setup the stvec to return HS-mode from VS-mode
-    // ↑ Is it require?
 
     // enter the guest
     // pc <- sstatus.sepc
