@@ -5,12 +5,8 @@
 
 #include "register.h"
 #include "trap_handler.h"
+#include "csr_type.h"
 
-typedef struct scause
-{
-    uint64_t code : 63;
-    uint8_t interrupt : 1;
-} __attribute__((packed)) csr_scause_t;
 
 typedef struct thread_info
 {

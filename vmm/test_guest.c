@@ -1,5 +1,9 @@
 #include "memory_manager.h"
 #include "vcpu.h"
+#include "csr_func.h"
+#include "csr_type.h"
+#include "exception.h"
+#include "io_interface.h"
 
 #include <stdbool.h>
 
@@ -27,7 +31,47 @@ bool run_test_guest(void)
     virtual_cpu_t *vcpu = alloc_vcpu();
 
     setup_guest_state(vcpu);
-    run_guest(vcpu);
+
+    while(true)
+    {
+        run_guest(vcpu);
+
+        csr_scause_t scause;
+        scause.value = csr_read_scause();
+        //uint64_t stval = csr_read_stval();
+
+        // interrupt
+        if(scause.interrupt)
+        {
+
+        }
+        // exception
+        else
+        {
+            switch(scause.code)
+            {
+                case instruction_page_fault:
+                {
+                    //TODO
+                    break;
+                }
+                case load_access_fault:
+                {
+                    break;
+                }
+                case store_amo_access_fault:
+                {
+                    break;
+                }
+                default:
+                {
+                    put_string(convert_exception_code_to_string(scause.code));
+                    break;
+                }
+            }
+        }
+
+    }
 
     return false;
 }
