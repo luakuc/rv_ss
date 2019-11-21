@@ -1,16 +1,18 @@
-#include "memory_manager.h"
-#include "vcpu.h"
 #include "csr_func.h"
 #include "csr_type.h"
 #include "exception.h"
 #include "io_interface.h"
+#include "memory_manager.h"
+#include "mmu.h"
+#include "string.h"
+#include "vcpu.h"
 
 #include <stdbool.h>
 
 // These symbols defined in linker script.
 extern int _heap_end, _start;
 
-static void setup_guest_state(virtual_cpu_t *vcpu)
+static void setup_guest_state(virtual_cpu_t *vcpu, uint64_t fdt_base)
 {
     vcpu->vcsr.vsatp = 0;
     vcpu->vcsr.vsstatus = 0;
@@ -26,42 +28,59 @@ static void setup_guest_state(virtual_cpu_t *vcpu)
 
 bool run_test_guest(void)
 {
-    //size_t kernel_memory_size = &_heap_end - &_start;
+    // size_t kernel_memory_size = &_heap_end - &_start;
 
     virtual_cpu_t *vcpu = alloc_vcpu();
 
     setup_guest_state(vcpu);
 
-    while(true)
+    bool running = true;
+    while (running)
     {
         run_guest(vcpu);
 
         csr_scause_t scause;
         scause.value = csr_read_scause();
-        //uint64_t stval = csr_read_stval();
+        uint64_t stval = csr_read_stval();
 
         // interrupt
-        if(scause.interrupt)
+        if (scause.interrupt)
         {
-
         }
         // exception
         else
         {
-            switch(scause.code)
+            switch (scause.code)
             {
                 case instruction_page_fault:
+                case load_page_fault:
+                case store_amo_page_fault:
                 {
-                    //TODO
-                    break;
-                }
-                case load_access_fault:
-                {
-                    break;
-                }
-                case store_amo_access_fault:
-                {
-                    break;
+                    // kernel space
+                    if(stval >= &_start && stval < &_heap_end)
+                    {
+                        uint64_t guest_page_base = stval & -0x1000;
+                        uint64_t *host_page = kalloc_4k();
+                        if (!host_page)
+                        {
+                            running = false;
+                            break;
+                        }
+                        memory_copy(host_page, (void*)guest_page_base, 0x1000);
+
+                        uint16_t flags = PTE_FLAG_USER | PTE_FLAG_EXEC |
+                                         PTE_FLAG_READ | PTE_FLAG_WRITE;
+                        guest_memory_map(vcpu->gp_hp_page_table, guest_page_base,
+                                         (uint64_t)host_page, 0x1000, flags);
+                        break;
+                    }
+                    // not kenrel space (e.g. firmware, periferal MMIO space)
+                    else
+                    {
+                        //TODO mmio emulation or access fault.
+                        running = false;
+                        break;
+                    }
                 }
                 default:
                 {
@@ -70,7 +89,6 @@ bool run_test_guest(void)
                 }
             }
         }
-
     }
 
     return false;
