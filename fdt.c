@@ -320,10 +320,10 @@ property_t *get_property(const char *node_path, const char *prop_name)
     }
 
     property_t *current = dt->properties;
-    size_t prop_len = string_length(prop_name);
+    size_t prop_len = string_length(prop_name) + 1;
     while (current)
     {
-        size_t name_len = string_length(current->name);
+        size_t name_len = string_length(current->name) + 1;
         size_t length = prop_len > name_len ? prop_len : name_len;
 
         bool result = string_compare(prop_name, current->name, length);

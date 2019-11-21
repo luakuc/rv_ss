@@ -5,7 +5,8 @@
 
 #include "memory_map.h"
 
-bool init_memory_manager(const struct memory_map_entry memory_map[]);
+bool pre_init_memory_manager(void);
+bool post_init_memory_manager(void);
 void *kalloc(const size_t size);
 void *kalloc_4k(void);
 void *kalloc_16k(void);

@@ -52,16 +52,24 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
 {
     bool result;
 
-    result = init_memory_manager(memory_map);
+    result = pre_init_memory_manager();
     if (!result)
     {
-        panic("failed the init_memory_manager");
+        //panic("failed the init_memory_manager");
+        return;
     }
 
     result = init_fdt(device_tree_base);
     if (!result)
     {
         // panic("failed the init_fdt");
+        return;
+    }
+
+    result = post_init_memory_manager();
+    if(!result)
+    {
+        return;
     }
 
     result = init_trap(hart_id);
