@@ -23,16 +23,16 @@ static void setup_guest_state(virtual_cpu_t *vcpu, uint64_t fdt_base)
     vcpu_set_sp(vcpu, 0x80100000);
     vcpu->guest_context.a0 = 0; // hart id.
     // TODO
-    vcpu->guest_context.a1 = 0x0; // fdt base
+    vcpu->guest_context.a1 = fdt_base; // fdt base
 }
 
-bool run_test_guest(void)
+bool run_test_guest(uint64_t fdt_base)
 {
     // size_t kernel_memory_size = &_heap_end - &_start;
 
     virtual_cpu_t *vcpu = alloc_vcpu();
 
-    setup_guest_state(vcpu);
+    setup_guest_state(vcpu, fdt_base);
 
     bool running = true;
     while (running)
@@ -56,8 +56,8 @@ bool run_test_guest(void)
                 case load_page_fault:
                 case store_amo_page_fault:
                 {
-                    // kernel space
-                    if(stval >= &_start && stval < &_heap_end)
+                    // dram space
+                    if(stval >= 0x80000000 && stval < (uint64_t)&_heap_end)
                     {
                         uint64_t guest_page_base = stval & -0x1000;
                         uint64_t *host_page = kalloc_4k();

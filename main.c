@@ -116,8 +116,8 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     put_string("hello\n");
     //enable_interrupt();
 
-    bool run_test_guest(void);
-    run_test_guest();
+    bool run_test_guest(uint64_t);
+    run_test_guest(device_tree_base);
     //void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
     //virtual_cpu_t *vcpu = alloc_vcpu();
     //setup_test_guest(vcpu, (uint64_t)guest_func);
