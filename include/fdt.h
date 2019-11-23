@@ -12,5 +12,5 @@ typedef struct property
     char *name;
 } property_t;
 
-bool init_fdt(uint64_t fdt_base);
+bool init_fdt(const uint64_t fdt_base);
 property_t *get_property(const char *node_path, const char *prop_name);

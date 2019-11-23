@@ -337,7 +337,38 @@ property_t *get_property(const char *node_path, const char *prop_name)
     return NULL;
 }
 
-bool init_fdt(uint64_t fdt_base)
+static device_tree_t* parse_fdt(const fdt_header_t* header)
+{
+    uint32_t magic = big2little_32(header->magic);
+    if (magic != FDT_HEADER_MAGIC)
+    {
+        return NULL;
+    }
+
+    uint32_t offset_to_struct = big2little_32(header->off_dt_struct);
+    uint32_t offset_to_string = big2little_32(header->off_dt_strings);
+    uint32_t offset_to_memory = big2little_32(header->off_mem_rsvmap);
+
+    memory_block = (fdt_reserve_entry_t *)((uint64_t)header + offset_to_memory);
+
+    struct_block = (fdt_struct_entry_t *)((uint64_t)header + offset_to_struct);
+
+    string_block = (char *)((uint64_t)header + offset_to_string);
+
+    int index = 0;
+
+    uint32_t tmp = struct_block[index++];
+    fdt_struct_entry_t entry = big2little_32(tmp);
+
+    if (entry != FDT_BEGIN_NODE)
+    {
+        return NULL;
+    }
+
+    return parse_node(&index);
+}
+
+bool init_fdt(const uint64_t fdt_base)
 {
     fdt_header_t *header = (fdt_header_t *)fdt_base;
 
@@ -347,29 +378,15 @@ bool init_fdt(uint64_t fdt_base)
         return false;
     }
 
-    // uint32_t totalsize = big2little_32(header->totalsize);
-    uint32_t offset_to_struct = big2little_32(header->off_dt_struct);
-    uint32_t offset_to_string = big2little_32(header->off_dt_strings);
-    uint32_t offset_to_memory = big2little_32(header->off_mem_rsvmap);
+    uint32_t totalsize = big2little_32(header->totalsize);
 
-    memory_block = (fdt_reserve_entry_t *)(fdt_base + offset_to_memory);
+    fdt_header_t* moved_header = (fdt_header_t*)kalloc(totalsize);
 
-    struct_block = (fdt_struct_entry_t *)(fdt_base + offset_to_struct);
+    // move the fdt to kernel managed area.
+    memory_copy(moved_header, header, totalsize);
 
-    string_block = (char *)(fdt_base + offset_to_string);
-
-    int index = 0;
-
-    uint32_t tmp = struct_block[index++];
-    fdt_struct_entry_t entry = big2little_32(tmp);
-
-    if (entry != FDT_BEGIN_NODE)
-    {
-        return false;
-    }
-
-    device_tree = parse_node(&index);
-    if (device_tree == NULL)
+    device_tree = parse_fdt(moved_header);
+    if(device_tree == NULL)
     {
         return false;
     }
