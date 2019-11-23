@@ -10,6 +10,8 @@ static fdt_reserve_entry_t *memory_block;
 static fdt_struct_entry_t *struct_block;
 static char *string_block;
 
+static uint64_t fdt_base_address = 0;
+
 char *get_next_name(int *index)
 {
     struct list
@@ -368,6 +370,11 @@ static device_tree_t* parse_fdt(const fdt_header_t* header)
     return parse_node(&index);
 }
 
+uint64_t get_fdt_base(void)
+{
+    return fdt_base_address;
+}
+
 bool init_fdt(const uint64_t fdt_base)
 {
     fdt_header_t *header = (fdt_header_t *)fdt_base;
@@ -381,6 +388,8 @@ bool init_fdt(const uint64_t fdt_base)
     uint32_t totalsize = big2little_32(header->totalsize);
 
     fdt_header_t* moved_header = (fdt_header_t*)kalloc(totalsize);
+
+    fdt_base_address = (uint64_t)moved_header;
 
     // move the fdt to kernel managed area.
     memory_copy(moved_header, header, totalsize);

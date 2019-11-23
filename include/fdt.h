@@ -13,4 +13,5 @@ typedef struct property
 } property_t;
 
 bool init_fdt(const uint64_t fdt_base);
+uint64_t get_fdt_base(void);
 property_t *get_property(const char *node_path, const char *prop_name);
