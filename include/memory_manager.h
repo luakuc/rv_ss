@@ -10,3 +10,5 @@ bool post_init_memory_manager(void);
 void *kalloc(const size_t size);
 void *kalloc_4k(void);
 void *kalloc_16k(void);
+
+extern uint64_t dram_base, dram_end;

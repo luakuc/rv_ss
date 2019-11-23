@@ -7,10 +7,12 @@ extern int _heap_start, _heap_end;
 static uint64_t heap_base_address;
 static uint64_t heap_end_address;
 
+uint64_t dram_base, dram_end;
+
 bool pre_init_memory_manager(void)
 {
     heap_base_address = (uint64_t)&_heap_start;
-    heap_end_address = (uint64_t)&_heap_start + 0x200000; // 2M heap for first step.
+    heap_end_address = heap_base_address + 0x200000; // 2M heap for first step.
 
     return true;
 }
@@ -34,11 +36,17 @@ bool post_init_memory_manager(void)
 
     heap_end_address = ram_base + ram_size;
 
+    dram_base = ram_base;
+    dram_end = ram_base + ram_size;
+
     return true;
 }
 
 void *kalloc(const size_t size)
 {
+    // 8byte alignment
+    heap_end_address = (heap_end_address + 8 - 1) & -8;
+
     uint64_t alloc_address = heap_base_address;
     heap_base_address += size;
     if (heap_base_address > heap_end_address)
@@ -67,6 +75,7 @@ void *kalloc_4k(void)
 
 void *kalloc_16k(void)
 {
+    // 16k alignment
     heap_base_address = (heap_base_address + 0x4000 - 1) & -0x4000;
 
     uint64_t alloc_address = heap_base_address;
