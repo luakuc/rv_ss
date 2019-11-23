@@ -47,6 +47,7 @@ page_table_entry_t *page_walk(const page_table_t root,
             {
                 return NULL;
             }
+            memory_set(new_page_table, 0x00, 0x1000);
             *entry = convert_into_table_entry(new_page_table);
         }
 
@@ -180,7 +181,7 @@ bool init_virtual_memory(void)
     memory_set(kernel_root_page_table, 0x00, sizeof(page_table_t) * 512);
 
     // DRAM
-    map_kernel_virtual_memory(0x80000000, 0x80000000, 0x800000,
+    map_kernel_virtual_memory(0x80000000, 0x80000000, 0x8000000,
                               PTE_FLAG_READ | PTE_FLAG_WRITE | PTE_FLAG_EXEC);
 
     // PLIC
