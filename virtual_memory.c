@@ -22,6 +22,11 @@ page_table_t convert_into_page_table(const page_table_entry_t entry)
     return result;
 }
 
+uintptr_t convert_into_page_base(const page_table_entry_t entry)
+{
+    return (uintptr_t)convert_into_page_table(entry);
+}
+
 page_table_entry_t convert_into_table_entry(const page_table_t table)
 {
     page_table_entry_t result;

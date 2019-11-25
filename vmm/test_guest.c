@@ -1,12 +1,13 @@
 #include "csr_func.h"
 #include "csr_type.h"
 #include "exception.h"
+#include "fdt.h"
 #include "io_interface.h"
 #include "memory_manager.h"
 #include "mmu.h"
+#include "plic_emu.h"
 #include "string.h"
 #include "vcpu.h"
-#include "fdt.h"
 
 #include <stdbool.h>
 
@@ -27,6 +28,30 @@ static void setup_guest_state(virtual_cpu_t *vcpu, uint64_t fdt_base)
     vcpu->guest_context.a1 = get_fdt_base(); // fdt base
 }
 
+static bool device_emulation(virtual_cpu_t *vcpu, enum exception_code code,
+                             uint64_t target_address,
+                             uint64_t instruction_address)
+{
+    bool is_read = code == load_page_fault;
+
+    // plic range
+    const uint64_t plic_base = 0x0c000000;
+    const uint64_t plic_end = 0x0c000000 + 0x04000000;
+    if (target_address >= plic_base && target_address <= plic_end)
+    {
+        bool result = plic_emulate(vcpu, target_address,
+                                   instruction_address, is_read);
+        if(!result)
+        {
+            return false;
+        }
+
+        return result;
+    }
+
+    return false;
+}
+
 bool run_test_guest(uint64_t fdt_base)
 {
     // size_t kernel_memory_size = &_heap_end - &_start;
@@ -43,10 +68,15 @@ bool run_test_guest(uint64_t fdt_base)
         csr_scause_t scause;
         scause.value = csr_read_scause();
         uint64_t stval = csr_read_stval();
+        uint64_t sepc = csr_read_sepc();
 
         // interrupt
         if (scause.interrupt)
         {
+            // received non delegated interrupt
+            put_string("received non delegated interrupt");
+            running = false;
+            continue;
         }
         // exception
         else
@@ -94,17 +124,16 @@ bool run_test_guest(uint64_t fdt_base)
                     // firmware
                     else if (stval >= dram_base && stval < (uint64_t)&_start)
                     {
-                        put_string(
-                            "//TODO you have to implement a firmware functions\n");
+                        put_string("//TODO you have to implement a firmware "
+                                   "functions\n");
                         running = false;
                         break;
                     }
                     // others
                     else
                     {
-                        // TODO mmio emulation or access fault.
-                        put_string("fault");
-                        running = false;
+                        running =
+                            device_emulation(vcpu, scause.code, stval, sepc);
                         break;
                     }
                 }

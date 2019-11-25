@@ -6,6 +6,7 @@
 #include "string.h"
 #include "trap.h"
 #include "virtual_memory.h"
+#include "plic_emu.h"
 
 void vcpu_set_pc(virtual_cpu_t *vcpu, uint64_t pc)
 {
@@ -117,6 +118,14 @@ static bool init_vcpu(virtual_cpu_t *vcpu)
     // physical and virtual.
     vcpu->gp_hp_page_table_phy = vcpu->gp_hp_page_table;
     memory_set(vcpu->gp_hp_page_table, 0x00, 0x4000);
+
+    plic_emulator_t* plic = alloc_plic_emulator();
+    if(plic == NULL)
+    {
+        return false;
+    }
+
+    vcpu->plic = plic;
 
     // TODO
     return true;

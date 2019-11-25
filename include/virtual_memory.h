@@ -70,4 +70,5 @@ bool virtual_memory_map(page_table_t page_table, physical_address_t p_address,
                         const uint16_t permission);
 page_table_t get_kernel_page_table(void);
 page_table_entry_t convert_into_table_entry(const page_table_t table);
+uintptr_t convert_into_page_base(const page_table_entry_t entry);
 page_table_t convert_into_page_table(const page_table_entry_t entry);

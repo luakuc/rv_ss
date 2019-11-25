@@ -5,6 +5,8 @@
 #include "mmu.h"
 #include "virtual_memory.h"
 
+typedef struct plic_emulator plic_emulator_t;
+
 typedef struct virtual_cpu
 {
     struct
@@ -88,6 +90,8 @@ typedef struct virtual_cpu
 
     page_table_t gp_hp_page_table;
     page_table_t gp_hp_page_table_phy;
+
+    plic_emulator_t *plic;
 
 } virtual_cpu_t;
 
