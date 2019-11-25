@@ -36,6 +36,13 @@ uint64_t csr_read_stval(void)
     return value;
 }
 
+uint64_t csr_read_sepc(void)
+{
+    uint64_t value;
+    __asm__ volatile("csrr %0, sepc" : "=r"(value));
+    return value;
+}
+
 uint64_t csr_read_vsstatus(void)
 {
     uint64_t vsstatus;

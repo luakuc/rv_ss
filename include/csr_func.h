@@ -9,6 +9,7 @@ void csr_write_satp(uint64_t satp);
 
 uint64_t csr_read_scause(void);
 uint64_t csr_read_stval(void);
+uint64_t csr_read_sepc(void);
 
 // for CSRs of hypervisor extension
 uint64_t csr_read_vsstatus(void);
