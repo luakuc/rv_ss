@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 
+#include "plic_defs.h"
 #include "memory_map.h"
 
 bool init_plic(const struct memory_map_entry *plic_entry);
