@@ -45,7 +45,7 @@ bool post_init_memory_manager(void)
 void *kalloc(const size_t size)
 {
     // 8byte alignment
-    heap_end_address = (heap_end_address + 8 - 1) & -8;
+    heap_base_address = (heap_base_address + 8 - 1) & -8;
 
     uint64_t alloc_address = heap_base_address;
     heap_base_address += size;
