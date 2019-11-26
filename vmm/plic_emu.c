@@ -1,8 +1,8 @@
 #include "plic_emu.h"
+#include "inst_emu.h"
 #include "memory_manager.h"
 #include "plic_defs.h"
 #include "string.h"
-#include "inst_emu.h"
 
 plic_emulator_t *alloc_plic_emulator(void)
 {
@@ -18,8 +18,8 @@ plic_emulator_t *alloc_plic_emulator(void)
     return plic;
 }
 
-bool plic_emulate(virtual_cpu_t *vcpu, uint64_t target,
-                       uint64_t instruction_address, bool is_read)
+bool plic_emulate_store(virtual_cpu_t *vcpu, uint64_t target, uint64_t value,
+                        uint8_t width)
 {
     uint64_t offset = target - SIFIVE_PLIC_PRIORITY_BASE;
 
@@ -35,21 +35,19 @@ bool plic_emulate(virtual_cpu_t *vcpu, uint64_t target,
          * 10: uart0
          * 32: pcie-irq
          */
-        if(is_read)
+
+        if (width != RV64_LOAD_STORE_WIDTH_WORD)
         {
-            //TODO
+            // XXX is it ok?
+            return false;
         }
-        else
-        {
-            bool result = instruction_emu_store(vcpu->gp_hp_page_table, instruction_address);
-            if(!result)
-            {
-                //TODO
-            }
-        }
-        //TODO
-        //vcpu->plic->priority_registers[selector];
+
+        vcpu->plic->priority_registers[selector] = value;
+        // TODO emulation
+        return true;
     }
+
+    // TODO implmeent for other registers.
 
     return false;
 }
