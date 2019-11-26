@@ -21,12 +21,12 @@ bool post_init_memory_manager(void)
 {
     // the value is based on the qemu/virt.
     property_t *prop = get_property("/memory@80000000", "reg");
-    if(!prop)
+    if (!prop)
     {
         return false;
     }
 
-    if(prop->len != 4)
+    if (prop->len != 4)
     {
         return false;
     }

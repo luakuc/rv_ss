@@ -55,7 +55,7 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     result = pre_init_memory_manager();
     if (!result)
     {
-        //panic("failed the init_memory_manager");
+        // panic("failed the init_memory_manager");
         return;
     }
 
@@ -67,7 +67,7 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     }
 
     result = post_init_memory_manager();
-    if(!result)
+    if (!result)
     {
         return;
     }
@@ -122,18 +122,18 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     // init_test_thread(kthread_0);
 
     put_string("hello\n");
-    //enable_interrupt();
+    // enable_interrupt();
 
     bool run_test_guest(uint64_t);
     result = run_test_guest(device_tree_base);
-    if(!result)
+    if (!result)
     {
         panic("error occured in run_test_guest\n");
     }
-    //void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
-    //virtual_cpu_t *vcpu = alloc_vcpu();
-    //setup_test_guest(vcpu, (uint64_t)guest_func);
-    //run_guest(vcpu);
+    // void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
+    // virtual_cpu_t *vcpu = alloc_vcpu();
+    // setup_test_guest(vcpu, (uint64_t)guest_func);
+    // run_guest(vcpu);
 
     // panic("finish");
 

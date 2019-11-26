@@ -339,7 +339,7 @@ property_t *get_property(const char *node_path, const char *prop_name)
     return NULL;
 }
 
-static device_tree_t* parse_fdt(const fdt_header_t* header)
+static device_tree_t *parse_fdt(const fdt_header_t *header)
 {
     uint32_t magic = big2little_32(header->magic);
     if (magic != FDT_HEADER_MAGIC)
@@ -370,10 +370,7 @@ static device_tree_t* parse_fdt(const fdt_header_t* header)
     return parse_node(&index);
 }
 
-uint64_t get_fdt_base(void)
-{
-    return fdt_base_address;
-}
+uint64_t get_fdt_base(void) { return fdt_base_address; }
 
 bool init_fdt(const uint64_t fdt_base)
 {
@@ -387,7 +384,7 @@ bool init_fdt(const uint64_t fdt_base)
 
     uint32_t totalsize = big2little_32(header->totalsize);
 
-    fdt_header_t* moved_header = (fdt_header_t*)kalloc(totalsize);
+    fdt_header_t *moved_header = (fdt_header_t *)kalloc(totalsize);
 
     fdt_base_address = (uint64_t)moved_header;
 
@@ -395,7 +392,7 @@ bool init_fdt(const uint64_t fdt_base)
     memory_copy(moved_header, header, totalsize);
 
     device_tree = parse_fdt(moved_header);
-    if(device_tree == NULL)
+    if (device_tree == NULL)
     {
         return false;
     }

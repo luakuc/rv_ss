@@ -26,7 +26,7 @@ static void setup_hypervisor_deleg_csr(void)
     hedeleg |= 1 << store_amo_page_fault;
 
     // for interrupt
-    //TODO
+    // TODO
 
     // update
     csr_write_hedeleg(hedeleg);
@@ -72,22 +72,22 @@ bool init_vmm(void)
 
 got_isa:
 
+{
+    // TODO check extension 'H' in property.
+    bool exist_h_extention = false;
+    for (int i = 0; isa[i]; ++i)
     {
-        // TODO check extension 'H' in property.
-        bool exist_h_extention = false;
-        for (int i = 0; isa[i]; ++i)
+        if (isa[i] == 'h')
         {
-            if (isa[i] == 'h')
-            {
-                exist_h_extention = true;
-            }
-        }
-
-        if (!exist_h_extention)
-        {
-            return false;
+            exist_h_extention = true;
         }
     }
+
+    if (!exist_h_extention)
+    {
+        return false;
+    }
+}
 
     setup_hypervisor_deleg_csr();
 

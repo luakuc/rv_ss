@@ -75,7 +75,6 @@
 #define VCPU_OFFSET_HOST_SSCRATCH 0x218
 #define VCPU_OFFSET_HOST_STVEC 0x220
 
-
 // for virtual CSRs
 //#define VCPU_OFFSET_VSSTATUS
 //#define VCPU_OFFSET_VSIP

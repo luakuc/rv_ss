@@ -2,8 +2,8 @@
 
 #include <stdbool.h>
 
-#include "plic_defs.h"
 #include "memory_map.h"
+#include "plic_defs.h"
 
 bool init_plic(const struct memory_map_entry *plic_entry);
 uint64_t plic_claim(void);
