@@ -12,6 +12,9 @@ switch_to_guest:
     sd sp, VCPU_OFFSET_HOST_SP(a0)
     sd gp, VCPU_OFFSET_HOST_GP(a0)
     sd tp, VCPU_OFFSET_HOST_TP(a0)
+    sd t0, VCPU_OFFSET_HOST_T0(a0)
+    sd t1, VCPU_OFFSET_HOST_T1(a0)
+    sd t2, VCPU_OFFSET_HOST_T2(a0)
     sd s0, VCPU_OFFSET_HOST_S0(a0)
     sd s1, VCPU_OFFSET_HOST_S1(a0)
     sd a1, VCPU_OFFSET_HOST_A1(a0)
@@ -31,6 +34,10 @@ switch_to_guest:
     sd s9, VCPU_OFFSET_HOST_S9(a0)
     sd s10, VCPU_OFFSET_HOST_S10(a0)
     sd s11, VCPU_OFFSET_HOST_S11(a0)
+    sd t3, VCPU_OFFSET_HOST_T3(a0)
+    sd t4, VCPU_OFFSET_HOST_T4(a0)
+    sd t5, VCPU_OFFSET_HOST_T5(a0)
+    sd t6, VCPU_OFFSET_HOST_T6(a0)
 
     csrr s0, sstatus
     sd s0, VCPU_OFFSET_HOST_SSTATUS(a0)
@@ -56,6 +63,9 @@ switch_to_guest:
     ld sp, VCPU_OFFSET_GUEST_SP(a0)
     ld gp, VCPU_OFFSET_GUEST_GP(a0)
     ld tp, VCPU_OFFSET_GUEST_TP(a0)
+    ld t0, VCPU_OFFSET_GUEST_T0(a0)
+    ld t1, VCPU_OFFSET_GUEST_T1(a0)
+    ld t2, VCPU_OFFSET_GUEST_T2(a0)
     ld s0, VCPU_OFFSET_GUEST_S0(a0)
     ld s1, VCPU_OFFSET_GUEST_S1(a0)
     ld a1, VCPU_OFFSET_GUEST_A1(a0)
@@ -75,6 +85,10 @@ switch_to_guest:
     ld s9, VCPU_OFFSET_GUEST_S9(a0)
     ld s10, VCPU_OFFSET_GUEST_S10(a0)
     ld s11, VCPU_OFFSET_GUEST_S11(a0)
+    ld t3, VCPU_OFFSET_GUEST_T3(a0)
+    ld t4, VCPU_OFFSET_GUEST_T4(a0)
+    ld t5, VCPU_OFFSET_GUEST_T5(a0)
+    ld t6, VCPU_OFFSET_GUEST_T6(a0)
 
     csrw sscratch, a0
     ld a0, VCPU_OFFSET_GUEST_A0(a0)
