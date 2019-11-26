@@ -6,6 +6,7 @@ void csr_write_stvec(uint64_t value);
 void csr_write_sie(uint64_t value);
 void csr_write_sscratch(uint64_t value);
 void csr_write_satp(uint64_t satp);
+void csr_write_sepc(uint64_t sepc);
 
 uint64_t csr_read_scause(void);
 uint64_t csr_read_stval(void);

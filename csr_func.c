@@ -22,6 +22,11 @@ void csr_write_satp(uint64_t satp)
     __asm__ volatile("csrw satp, %0" ::"r"(satp));
 }
 
+void csr_write_sepc(uint64_t sepc)
+{
+    __asm__ volatile("csrw sepc, %0" ::"r"(sepc));
+}
+
 uint64_t csr_read_scause(void)
 {
     uint64_t value;
