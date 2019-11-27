@@ -1,5 +1,11 @@
 #pragma once
 
+/*
+ * QEMU PLIC implements a PLIC of U54 board.
+ * Details in
+ * https://static.dev.sifive.com/U54-MC-RVCoreIP.pdf
+ */
+
 #define QEMU_VIRT_PLIC_BASE 0x0c000000
 
 #define SIFIVE_PLIC_PRIORITY_BASE (QEMU_VIRT_PLIC_BASE)

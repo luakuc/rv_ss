@@ -47,6 +47,18 @@ bool plic_emulate_store(virtual_cpu_t *vcpu, uint64_t target, uint64_t value,
         return true;
     }
 
+    // enable registers
+    if ((SIFIVE_PLIC_S_ENABLE_BASE <= target) &&
+        (target < (SIFIVE_PLIC_S_ENABLE_BASE + 0x414)))
+    {
+        uint64_t selector = offset / sizeof(uint32_t);
+        vcpu->plic->enable_registers[selector] = value;
+
+        //TODO
+
+        return true;
+    }
+
     // TODO implmeent for other registers.
 
     return false;
