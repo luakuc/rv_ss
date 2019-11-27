@@ -2,6 +2,7 @@
 #include "instruction.h"
 #include "mmu.h"
 #include "plic_emu.h"
+#include "uart_emu.h"
 #include "virtual_memory.h"
 
 static uint64_t *get_register_address(virtual_cpu_t *vcpu, size_t offset)
@@ -15,7 +16,7 @@ static bool store_emulation(virtual_cpu_t *vcpu, uint64_t target_address,
     // plic range
     const uint64_t plic_base = 0x0c000000;
     const uint64_t plic_end = 0x0c000000 + 0x04000000;
-    if (target_address >= plic_base && target_address <= plic_end)
+    if (target_address >= plic_base && target_address < plic_end)
     {
         bool result = plic_emulate_store(vcpu, target_address, value, width);
         if (!result)
@@ -23,7 +24,20 @@ static bool store_emulation(virtual_cpu_t *vcpu, uint64_t target_address,
             return false;
         }
 
-        return result;
+        return true;
+    }
+
+    const uint64_t uart0_base = 0x10000000;
+    const uint64_t uart0_end = uart0_base + 0x100;
+    if(uart0_base <= target_address && target_address < uart0_end)
+    {
+        bool result = uart_emulation_store(vcpu, target_address, value, width);
+        if(!result)
+        {
+            return false;
+        }
+
+        return true;
     }
 
     return false;

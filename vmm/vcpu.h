@@ -6,6 +6,7 @@
 #include "virtual_memory.h"
 
 typedef struct plic_emulator plic_emulator_t;
+typedef struct uart_emulator uart_emulator_t;
 
 typedef struct virtual_cpu
 {
@@ -107,6 +108,7 @@ typedef struct virtual_cpu
     page_table_t gp_hp_page_table_phy;
 
     plic_emulator_t *plic;
+    uart_emulator_t *uart;
 
 } virtual_cpu_t;
 

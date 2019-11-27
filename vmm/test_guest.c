@@ -6,7 +6,7 @@
 #include "io_interface.h"
 #include "memory_manager.h"
 #include "mmu.h"
-#include "plic_emu.h"
+#include "sbi_emu.h"
 #include "string.h"
 #include "vcpu.h"
 
@@ -117,6 +117,16 @@ bool run_test_guest(uint64_t fdt_base)
                         }
                         break;
                     }
+                }
+                case environment_call_from_vs:
+                {
+                    running = emulate_sbi_call(vcpu);
+                    if(running)
+                    {
+                        // return to next instruction
+                        vcpu->guest_context.sepc += 4;
+                    }
+                    break;
                 }
                 default:
                 {

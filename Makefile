@@ -24,7 +24,7 @@ QEMU_FLAGS	:= -monitor null -cpu rv64,x-h=true -display none -serial mon:stdio \
 QEMU_FLAGS 	+= -drive file=$(DISK_IMG),if=none,format=raw,id=file_0 \
 			   -device virtio-blk-device,drive=file_0,bus=virtio-mmio-bus.0
 
-VMM_OBJS	:= vmm/vcpu.o vmm/vmm.o vmm/enter.o vmm/mmu.o vmm/hfence.o vmm/test_guest.o vmm/trap.o vmm/plic_emu.o vmm/inst_emu.o
+VMM_OBJS	:= vmm/vcpu.o vmm/vmm.o vmm/enter.o vmm/mmu.o vmm/hfence.o vmm/test_guest.o vmm/trap.o vmm/plic_emu.o vmm/uart_emu.o vmm/inst_emu.o vmm/sbi_emu.o
 OBJS		:= entry.o main.o memory_map_content.o plic.o trap.o csr_func.o trap_handler.o uart.o register.o smp.o interrupt.o timer.o thread.o string.o context_switch.o io_interface.o utils.o memory_manager.o virtual_memory.o user_sample.o system_call.o virtio_mmio.o exception.o endian.o $(VMM_OBJS) fdt.o
 
 

@@ -96,13 +96,13 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
         panic("failed the init_uart");
     }
 
-    result = init_virtio_mmio(&memory_map[VIRT_VIRTIO]);
-    if (!result)
-    {
-        put_string("Failed to initialize virtio devices.\n"
-                   "Any virtio devices are disabled\n");
-        // panic("failed the init_virtio");
-    }
+    //result = init_virtio_mmio(&memory_map[VIRT_VIRTIO]);
+    //if (!result)
+    //{
+    //    put_string("Failed to initialize virtio devices.\n"
+    //               "Any virtio devices are disabled\n");
+    //    // panic("failed the init_virtio");
+    //}
 
     result = init_timer();
     if (!result)

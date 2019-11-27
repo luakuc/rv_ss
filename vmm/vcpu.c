@@ -3,6 +3,7 @@
 #include "memory_manager.h"
 #include "mmu.h"
 #include "plic_emu.h"
+#include "uart_emu.h"
 #include "register.h"
 #include "string.h"
 #include "trap.h"
@@ -126,6 +127,14 @@ static bool init_vcpu(virtual_cpu_t *vcpu)
     }
 
     vcpu->plic = plic;
+
+    uart_emulator_t *uart = alloc_uart_emulator();
+    if(uart == NULL)
+    {
+        return false;
+    }
+
+    vcpu->uart = uart;
 
     // TODO
     return true;
