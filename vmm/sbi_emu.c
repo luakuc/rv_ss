@@ -33,7 +33,7 @@ bool emulate_sbi_call(virtual_cpu_t* vcpu)
         case SBI_EXT_ID_SBI_TIMER:
         {
             //TODO
-            return false;
+            return true;
             break;
         }
         default:

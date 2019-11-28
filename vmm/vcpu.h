@@ -107,6 +107,11 @@ typedef struct virtual_cpu
     page_table_t gp_hp_page_table;
     page_table_t gp_hp_page_table_phy;
 
+    struct {
+        uint32_t* base;
+        size_t size;
+    } fdt;
+
     plic_emulator_t *plic;
     uart_emulator_t *uart;
 

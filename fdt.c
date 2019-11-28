@@ -161,6 +161,7 @@ property_t *parse_property(int *index)
     {
         return NULL;
     }
+
     prop->next = NULL;
     prop->value = value;
     prop->name = get_string(info.nameoff);
@@ -370,7 +371,7 @@ static device_tree_t *parse_fdt(const fdt_header_t *header)
     return parse_node(&index);
 }
 
-fdt_header_t* get_fdt_base(void) { return fdt_base_address; }
+fdt_header_t *get_fdt_base(void) { return fdt_base_address; }
 
 bool init_fdt(const uint64_t fdt_base)
 {

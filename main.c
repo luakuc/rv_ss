@@ -124,8 +124,8 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     put_string("hello\n");
     // enable_interrupt();
 
-    bool run_test_guest(uint64_t);
-    result = run_test_guest(device_tree_base);
+    bool run_test_guest(void);
+    result = run_test_guest();
     if (!result)
     {
         panic("error occured in run_test_guest\n");

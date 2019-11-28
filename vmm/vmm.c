@@ -6,6 +6,8 @@
 #include "memory_manager.h"
 #include "vcpu.h"
 
+#include "io_interface.h"
+
 static void setup_hypervisor_deleg_csr(void)
 {
     uint64_t hedeleg = 0;
@@ -35,6 +37,7 @@ static void setup_hypervisor_deleg_csr(void)
 
 bool init_vmm(void)
 {
+    bool is_h_ext_containd = false;
     const char *name = "riscv,isa";
     property_t *prop = get_property("/cpus/cpu@0", name);
     if (!prop)
@@ -72,22 +75,20 @@ bool init_vmm(void)
 
 got_isa:
 
-{
     // TODO check extension 'H' in property.
-    bool exist_h_extention = false;
     for (int i = 0; isa[i]; ++i)
     {
         if (isa[i] == 'h')
         {
-            exist_h_extention = true;
+            is_h_ext_containd = true;
+            break;
         }
     }
 
-    if (!exist_h_extention)
+    if (!is_h_ext_containd)
     {
         return false;
     }
-}
 
     setup_hypervisor_deleg_csr();
 

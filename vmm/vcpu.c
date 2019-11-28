@@ -1,13 +1,16 @@
 #include "vcpu.h"
 #include "csr_func.h"
+#include "fdt.h"
 #include "memory_manager.h"
 #include "mmu.h"
 #include "plic_emu.h"
-#include "uart_emu.h"
 #include "register.h"
 #include "string.h"
 #include "trap.h"
+#include "uart_emu.h"
 #include "virtual_memory.h"
+#include "fdt_edit.h"
+#include "endian.h"
 
 void vcpu_set_pc(virtual_cpu_t *vcpu, uint64_t pc)
 {
@@ -129,14 +132,31 @@ static bool init_vcpu(virtual_cpu_t *vcpu)
     vcpu->plic = plic;
 
     uart_emulator_t *uart = alloc_uart_emulator();
-    if(uart == NULL)
+    if (uart == NULL)
     {
         return false;
     }
 
     vcpu->uart = uart;
 
-    // TODO
+    fdt_header_t *fdt_header = get_fdt_base();
+
+    uint32_t totalsize = big2little_32(fdt_header->totalsize);
+
+    vcpu->fdt.base = kalloc(totalsize);
+    if (!vcpu->fdt.base)
+    {
+        return false;
+    }
+
+    memory_copy(vcpu->fdt.base, fdt_header, totalsize);
+
+    bool result = conceal_h_extension((fdt_header_t*)vcpu->fdt.base, 0);
+    if(!result)
+    {
+        return false;
+    }
+
     return true;
 }
 

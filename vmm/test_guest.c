@@ -9,13 +9,14 @@
 #include "sbi_emu.h"
 #include "string.h"
 #include "vcpu.h"
+#include "fdt_edit.h"
 
 #include <stdbool.h>
 
 // These symbols defined in linker script.
 extern int _heap_end, _start;
 
-static void setup_guest_state(virtual_cpu_t *vcpu, uint64_t fdt_base)
+static void setup_guest_state(virtual_cpu_t *vcpu)
 {
     vcpu->vcsr.vsatp = 0;
     vcpu->vcsr.vsstatus = 0;
@@ -25,17 +26,22 @@ static void setup_guest_state(virtual_cpu_t *vcpu, uint64_t fdt_base)
     vcpu_set_pc(vcpu, 0x80200000);
     vcpu_set_sp(vcpu, 0x80100000);
     vcpu->guest_context.a0 = 1; // hart id.
+
     // TODO
-    vcpu->guest_context.a1 = get_fdt_base(); // fdt base
+    vcpu->guest_context.a1 = vcpu->fdt.base;
 }
 
-bool run_test_guest(uint64_t fdt_base)
+bool run_test_guest(void)
 {
     // size_t kernel_memory_size = &_heap_end - &_start;
 
     virtual_cpu_t *vcpu = alloc_vcpu();
+    if(vcpu == NULL)
+    {
+        return false;
+    }
 
-    setup_guest_state(vcpu, fdt_base);
+    setup_guest_state(vcpu);
 
     bool running = true;
     while (running)
