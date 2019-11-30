@@ -1,4 +1,5 @@
 #include "uart_emu.h"
+#include "uart_regs.h"
 #include "memory_manager.h"
 
 uart_emulator_t *alloc_uart_emulator(void)
@@ -30,6 +31,7 @@ bool uart_emulation_store(virtual_cpu_t *vcpu, uint64_t target, uint64_t value, 
     {
         return false;
     }
+    //TODO
 
     return true;
 }
