@@ -2,14 +2,15 @@
 #include "csr_type.h"
 #include "exception.h"
 #include "fdt.h"
+#include "fdt_edit.h"
 #include "inst_emu.h"
+#include "instruction.h"
 #include "io_interface.h"
 #include "memory_manager.h"
 #include "mmu.h"
 #include "sbi_emu.h"
 #include "string.h"
 #include "vcpu.h"
-#include "fdt_edit.h"
 
 #include <stdbool.h>
 
@@ -36,7 +37,7 @@ bool run_test_guest(void)
     // size_t kernel_memory_size = &_heap_end - &_start;
 
     virtual_cpu_t *vcpu = alloc_vcpu();
-    if(vcpu == NULL)
+    if (vcpu == NULL)
     {
         return false;
     }
@@ -63,23 +64,24 @@ bool run_test_guest(void)
         // exception
         else
         {
+            char stval_str[65];
+            char sepc_str[65];
+            int_to_str(stval, stval_str);
+            int_to_str(vcpu->guest_context.sepc, sepc_str);
+
+            put_string(stval_str);
+            put_string(" - ");
+            put_string(sepc_str);
+            put_string(" - ");
+            put_string(convert_exception_code_to_string(scause.code));
+            put_string("\n");
+
             switch (scause.code)
             {
                 case instruction_page_fault:
                 case load_page_fault:
                 case store_amo_page_fault:
                 {
-                    char stval_str[65];
-                    char sepc_str[65];
-                    int_to_str(stval, stval_str);
-                    int_to_str(vcpu->guest_context.sepc, sepc_str);
-
-                    put_string(stval_str);
-                    put_string(" - ");
-                    put_string(sepc_str);
-                    put_string(" - ");
-                    put_string(convert_exception_code_to_string(scause.code));
-                    put_string("\n");
 
                     // kernel space
                     if (stval >= (uint64_t)&_start && stval < dram_end)
@@ -127,17 +129,35 @@ bool run_test_guest(void)
                 case environment_call_from_vs:
                 {
                     running = emulate_sbi_call(vcpu);
-                    if(running)
+                    if (running)
                     {
                         // return to next instruction
                         vcpu->guest_context.sepc += 4;
                     }
                     break;
                 }
+                case illegal_instruction:
+                {
+                    uint32_t instruction;
+                    bool result = read_guest_instuction(
+                        vcpu, vcpu->guest_context.sepc, &instruction);
+                    if (!result)
+                    {
+                        return false;
+                    }
+
+                    if(instruction == RV64_WFI)
+                    {
+                        put_string("the guest executes WFI. exit loop");
+                        return true;
+                    }
+
+                    return false;
+                    break;
+                }
                 default:
                 {
-                    put_string(convert_exception_code_to_string(scause.code));
-                    break;
+                    return false;
                 }
             }
         }

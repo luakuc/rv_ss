@@ -13,3 +13,4 @@
 
 // rv64 load and store instruction emulation
 bool instruction_emulation(virtual_cpu_t *vcpu, uint64_t instruction_address);
+bool read_guest_instuction(virtual_cpu_t* vcpu, uint64_t address, uint32_t* instruction);
