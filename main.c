@@ -110,12 +110,11 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
         panic("failed the init_timer");
     }
 
-    result = init_vmm();
+    bool is_vmm_enabled = init_vmm();
     if (!result)
     {
         // panic("failed the init_vmm");
-        put_string("Failed to initialize for virtual machine monitor\n"
-                   "The VMM is disabled\n");
+        put_string("VMM module is disabled\n");
     }
 
     // void init_test_thread();
@@ -124,12 +123,16 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
     put_string("hello\n");
     // enable_interrupt();
 
-    bool run_test_guest(void);
-    result = run_test_guest();
-    if (!result)
+    if(is_vmm_enabled)
     {
-        panic("error occured in run_test_guest\n");
+        bool run_test_guest(void);
+        result = run_test_guest();
+        if (!result)
+        {
+            panic("error occured in run_test_guest\n");
+        }
     }
+
     // void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
     // virtual_cpu_t *vcpu = alloc_vcpu();
     // setup_test_guest(vcpu, (uint64_t)guest_func);
