@@ -29,10 +29,10 @@ static bool store_emulation(virtual_cpu_t *vcpu, uint64_t target_address,
 
     const uint64_t uart0_base = 0x10000000;
     const uint64_t uart0_end = uart0_base + 0x100;
-    if(uart0_base <= target_address && target_address < uart0_end)
+    if (uart0_base <= target_address && target_address < uart0_end)
     {
         bool result = uart_emulation_store(vcpu, target_address, value, width);
-        if(!result)
+        if (!result)
         {
             return false;
         }
@@ -43,11 +43,37 @@ static bool store_emulation(virtual_cpu_t *vcpu, uint64_t target_address,
     return false;
 }
 
-// static bool load_emulation(virtual_cpu_t *vcpu, uint64_t target_address,
-//                    uint64_t *value, uint8_t width)
-//{
-//    return false;
-//}
+static bool load_emulation(virtual_cpu_t *vcpu, uint64_t target_address,
+                           uint64_t *value, uint8_t width)
+{
+    //const uint64_t plic_base = 0x0c000000;
+    //const uint64_t plic_end = 0x0c000000 + 0x04000000;
+    //if (target_address >= plic_base && target_address < plic_end)
+    //{
+    //    bool result = plic_emulate_load(vcpu, target_address, value, width);
+    //    if (!result)
+    //    {
+    //        return false;
+    //    }
+
+    //    return true;
+    //}
+
+    // uart register range
+    const uint64_t uart0_base = 0x10000000;
+    const uint64_t uart0_end = uart0_base + 0x100;
+    if (uart0_base <= target_address && target_address < uart0_end)
+    {
+        bool result = uart_emulation_load(vcpu, target_address, value, width);
+        if (!result)
+        {
+            return false;
+        }
+
+        return true;
+    }
+    return false;
+}
 
 bool instruction_emulation(virtual_cpu_t *vcpu, uint64_t instruction_address)
 {
@@ -93,12 +119,28 @@ bool instruction_emulation(virtual_cpu_t *vcpu, uint64_t instruction_address)
     }
     else if (opcode == RV64_OPCODE_LOAD)
     {
-        // TODO
-        // uint64_t value;
-        // bool result = load_emulation(vcpu, target, &value, width);
-        // if(!resul) {return false;}
-        // write back the value to a rd register.
-        // return true;
+        uint16_t dest = (instruction & RV64_LOAD_STORE_DEST_MASK) >>
+                        RV64_LOAD_DEST_SHIFT_AMOUNT;
+
+        uint16_t offset = (instruction & RV64_LOAD_OFFSET_MASK) >>
+                          RV64_LOAD_OFFSET_SHIFT_AMOUNT;
+
+        int32_t sign_extended_offset = offset | -(offset & 0x800);
+        uint64_t target = *base_reg_ptr + sign_extended_offset;//TODO
+
+        uint64_t read_from_device;
+        bool result = load_emulation(vcpu, target, &read_from_device, width);
+        if (!result)
+        {
+            return false;
+        }
+
+        //TODO 64bit sign exntend the loaded value;
+
+        uint64_t* dest_reg = get_register_address(vcpu, dest);
+        *dest_reg = read_from_device;
+
+        return true;
     }
 
     return false;

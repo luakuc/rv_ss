@@ -14,4 +14,7 @@ typedef struct uart_emulator
 } uart_emulator_t;
 
 uart_emulator_t *alloc_uart_emulator(void);
-bool uart_emulation_store(virtual_cpu_t *vcpu, uint64_t target, uint64_t value, uint8_t width);
+bool uart_emulation_store(virtual_cpu_t *vcpu, uint64_t target, uint64_t value,
+                          uint8_t width);
+bool uart_emulation_load(virtual_cpu_t *vcpu, uint64_t target, uint64_t *value,
+                         uint8_t width);
