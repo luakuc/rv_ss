@@ -81,9 +81,8 @@ return_from_exception:
 
     sd sp, TP_KERNEL_SP_OFFSET(tp)
 
-    // restore user thread pointer
-    sd s0, TF_TP_OFFSET(sp)
-    csrw sscratch, s0
+    // restore kernel thread pointer
+    csrw sscratch, tp
 
     ld ra, TF_RA_OFFSET(sp)
     ld gp, TF_GP_OFFSET(sp)
@@ -116,6 +115,5 @@ return_from_exception:
     ld t5, TF_T5_OFFSET(sp)
     ld t6, TF_T6_OFFSET(sp)
     ld sp, TF_SP_OFFSET(sp)
-
 
     sret
