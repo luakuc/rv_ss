@@ -43,6 +43,7 @@ bool run_test_guest(void)
     }
 
     setup_guest_state(vcpu);
+    put_string("run guest\n");
 
     bool running = true;
     while (running)
@@ -57,7 +58,7 @@ bool run_test_guest(void)
         if (scause.interrupt)
         {
             // received non delegated interrupt
-            put_string("received non delegated interrupt");
+            put_string("received non delegated interrupt\n");
             running = false;
             continue;
         }
@@ -69,12 +70,12 @@ bool run_test_guest(void)
             int_to_str(stval, stval_str);
             int_to_str(vcpu->guest_context.sepc, sepc_str);
 
-            put_string(stval_str);
-            put_string(" - ");
-            put_string(sepc_str);
-            put_string(" - ");
-            put_string(convert_exception_code_to_string(scause.code));
-            put_string("\n");
+            //put_string(stval_str);
+            //put_string(" - ");
+            //put_string(sepc_str);
+            //put_string(" - ");
+            //put_string(convert_exception_code_to_string(scause.code));
+            //put_string("\n");
 
             switch (scause.code)
             {
