@@ -107,6 +107,7 @@ void run_guest(virtual_cpu_t *vcpu)
 
     hfence_gvma();
 
+    vcpu->state = VCPU_STATE_RUNNING;
     switch_to_guest(vcpu);
 }
 
@@ -156,6 +157,8 @@ static bool init_vcpu(virtual_cpu_t *vcpu)
     {
         return false;
     }
+
+    vcpu->state = VCPU_STATE_READY;
 
     return true;
 }

@@ -26,7 +26,7 @@
 bool emulate_sbi_call(virtual_cpu_t* vcpu)
 {
     uint64_t extension_id = vcpu->guest_context.a7;
-    uint64_t function_id = vcpu->guest_context.a6;
+    //uint64_t function_id = vcpu->guest_context.a6;
 
     switch(extension_id)
     {

@@ -111,7 +111,7 @@ static uint32_t *search_prop(uint32_t *struct_base, uint32_t *string_base,
         uint32_t token = big2little_32(struct_base[index++]);
         if (token == FDT_PROP)
         {
-            uint32_t len = big2little_32(struct_base[index++]);
+            //uint32_t len = big2little_32(struct_base[index++]);
             size_t nameoff = (size_t)big2little_32(struct_base[index++]);
 
             bool result = check_string(string_base, nameoff, name);
@@ -164,9 +164,9 @@ bool conceal_h_extension(fdt_header_t *header, size_t hart_id)
         return false;
     }
 
-    const int token_index = 0;
+    //const int token_index = 0;
     const int len_index = 1;
-    const int nameoff_index = 2;
+    //const int nameoff_index = 2;
     const int value_index = 3;
 
     uint32_t len = big2little_32(prop[len_index]);

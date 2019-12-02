@@ -29,7 +29,7 @@ static void setup_guest_state(virtual_cpu_t *vcpu)
     vcpu->guest_context.a0 = 1; // hart id.
 
     // TODO
-    vcpu->guest_context.a1 = vcpu->fdt.base;
+    vcpu->guest_context.a1 = (uint64_t)vcpu->fdt.base;
 }
 
 bool run_test_guest(void)
@@ -140,29 +140,33 @@ bool run_test_guest(void)
                 case illegal_instruction:
                 {
                     uint32_t instruction;
-                    bool result = read_guest_instuction(
+                    running = read_guest_instuction(
                         vcpu, vcpu->guest_context.sepc, &instruction);
-                    if (!result)
+                    if (!running)
                     {
-                        return false;
+                        break;
                     }
 
                     if(instruction == RV64_WFI)
                     {
+                        vcpu->state = VCPU_STATE_BLOCKED;
                         put_string("the guest executes WFI. exit loop");
                         return true;
                     }
 
-                    return false;
+                    running = false;
                     break;
                 }
                 default:
                 {
-                    return false;
+                    running = false;
+                    break;
                 }
             }
         }
     }
+
+    vcpu->state = VCPU_STATE_TERMINATED;
 
     return false;
 }

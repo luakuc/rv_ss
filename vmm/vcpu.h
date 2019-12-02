@@ -8,6 +8,14 @@
 typedef struct plic_emulator plic_emulator_t;
 typedef struct uart_emulator uart_emulator_t;
 
+typedef enum vcpu_state
+{
+    VCPU_STATE_READY,
+    VCPU_STATE_RUNNING,
+    VCPU_STATE_BLOCKED, // stoped(exited) due to WFI instruction.
+    VCPU_STATE_TERMINATED,
+} vcpu_state_t;
+
 typedef struct virtual_cpu
 {
     struct
@@ -111,6 +119,8 @@ typedef struct virtual_cpu
         uint32_t* base;
         size_t size;
     } fdt;
+
+    vcpu_state_t state;
 
     plic_emulator_t *plic;
     uart_emulator_t *uart;
