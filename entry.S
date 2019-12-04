@@ -1,14 +1,11 @@
-#include "csr.h"
-
 .section .text.start
 .globl _start
 _start:
     // disable all interrupts
-	csrw CSR_SIE, zero
-    csrw CSR_SIP, zero
+	csrw sie, zero
+    csrw sip, zero
     li tp, 0
-
-    //TODO setup global pointer
+    li gp, 0
 
     la sp, _kernel_stack;
     call start_kernel
