@@ -1,4 +1,6 @@
 #include "virtio_mmio.h"
+#include "io_interface.h"
+#include "string.h"
 
 // virtio mmio register offsets
 // There are details in
@@ -34,10 +36,45 @@ enum device_type
 
 #define QEMU_MAGIC_VALUE 0x74726976
 
+#define STATUS_RESET 0x0
+#define STATUS_ACK 0x1
+#define STATUS_DRIVER 0x2
+
+// features bit
+#define VIRTIO_BLK_F_BARRIER 0 // legacy interface
+#define VIRTIO_BLK_F_SIZE_MAX 1
+#define VIRTIO_BLK_F_SEG_MAX 2
+#define VIRTIO_BLK_F_GEOMETRY 4
+#define VIRTIO_BLK_F_RO 5
+#define VIRTIO_BLK_F_BLK_SIZE 6
+#define VIRTIO_BLK_F_SCSI 7 // legacy interface
+#define VIRTIO_BLK_F_FLUSH 9
+#define VIRTIO_BLK_F_TOPOLOGY 10
+#define VIRTIO_BLK_F_CONFIG_WCE 11
+
 static bool init_virtio_block(const uintptr_t base)
 {
-    // uint32_t status = *(uint32_t *)(base + STATUS);
-    // TODO
+    // 4.1.1 Device Initialization
+    uint32_t *status = (uint32_t *)(base + STATUS);
+    *status= STATUS_RESET;
+
+    uint32_t value = *status;
+    *status= value | STATUS_ACK;
+
+    value = *status;
+    *status = value | STATUS_DRIVER;
+
+    uint32_t* device_features = (uint32_t *)(base + DEVICE_FEATURES);
+    value = *device_features;
+    char features_str[10];
+    int_to_str(value, features_str);
+    put_string("virtio,block: device features 0x");
+    put_string(features_str);
+    put_string("\n");
+
+
+    // 4.2.3.2 Virtqueue Configuration
+    //(base + QUEUE_SEL)
     return false;
 }
 
@@ -53,8 +90,16 @@ bool init_virtio_mmio(const struct memory_map_entry *memory_map_entry)
     }
 
     uint32_t version = *(uint32_t *)(base + VERSION);
-    if (version != 2)
+
+    if(version == 2)
     {
+        put_string("this driver is not non legacy virtio devices.\n");
+        return false;
+    }
+
+    if (version != 1)
+    {
+        put_string("unknown version");
         return false;
     }
 
