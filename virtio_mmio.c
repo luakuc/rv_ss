@@ -39,6 +39,8 @@ enum device_type
 #define STATUS_RESET 0x0
 #define STATUS_ACK 0x1
 #define STATUS_DRIVER 0x2
+#define STATUS_DRIVER_OK 0x4
+#define STATUS_FEATURES_OK 0x8
 
 // features bit
 #define VIRTIO_BLK_F_BARRIER 0 // legacy interface
@@ -54,27 +56,47 @@ enum device_type
 
 static bool init_virtio_block(const uintptr_t base)
 {
-    // 4.1.1 Device Initialization
+    // 4.1.1 Device Initialization & 3.1.1
+    // 1. reset the device
     uint32_t *status = (uint32_t *)(base + STATUS);
-    *status= STATUS_RESET;
+    *status = STATUS_RESET;
 
-    uint32_t value = *status;
-    *status= value | STATUS_ACK;
+    // 2. set the ack status bit
+    *status |= STATUS_ACK;
 
-    value = *status;
-    *status = value | STATUS_DRIVER;
+    // 3. set the driver status bit
+    *status |= STATUS_DRIVER;
 
-    uint32_t* device_features = (uint32_t *)(base + DEVICE_FEATURES);
-    value = *device_features;
+    // 4. read device feature bits and write the subset of the feature bits
+    uint32_t *device_features = (uint32_t *)(base + DEVICE_FEATURES);
+
     char features_str[10];
-    int_to_str(value, features_str);
+    int_to_str(*device_features, features_str);
     put_string("virtio,block: device features 0x");
     put_string(features_str);
     put_string("\n");
+    //TODO write the features bit
 
+    // 5. set the features_ok status bit
+    *status |= STATUS_FEATURES_OK;
+
+    // 6. read features_ok bit
+    if(!(*status & STATUS_FEATURES_OK))
+    {
+        // setup failed
+        put_string("features ok status bit is zero");
+        return false;
+    }
+
+    // 7. device specific setup
+
+    // 8. setup driver_ok status bit
+    *status |= STATUS_DRIVER_OK;
 
     // 4.2.3.2 Virtqueue Configuration
-    //(base + QUEUE_SEL)
+    // 1. select the queue writing its indext to QueueSel
+    uint32_t *queue_sel = (uint32_t*)(base + QUEUE_SEL);
+
     return false;
 }
 
@@ -91,7 +113,7 @@ bool init_virtio_mmio(const struct memory_map_entry *memory_map_entry)
 
     uint32_t version = *(uint32_t *)(base + VERSION);
 
-    if(version == 2)
+    if (version == 2)
     {
         put_string("this driver is not non legacy virtio devices.\n");
         return false;
