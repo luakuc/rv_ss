@@ -57,13 +57,13 @@ void *kalloc(const size_t size)
     return (void *)alloc_address;
 }
 
-void *kalloc_4k(void)
+void *knalloc_4k(int n)
 {
     // 4k alignment
     heap_base_address = (heap_base_address + 0x1000 - 1) & -0x1000;
 
     uint64_t alloc_address = heap_base_address;
-    heap_base_address += 0x1000;
+    heap_base_address += 0x1000 * n;
 
     if (heap_base_address > heap_end_address)
     {
@@ -71,6 +71,11 @@ void *kalloc_4k(void)
     }
 
     return (void *)alloc_address;
+}
+
+void *kalloc_4k(void)
+{
+    return knalloc_4k(1);
 }
 
 void *kalloc_16k(void)
