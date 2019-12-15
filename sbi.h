@@ -17,3 +17,12 @@ static inline void sbi_shutdown(void)
                      "ecall\n\t" ::
                          : "a0");
 }
+
+static inline void sbi_console_putchar(char c)
+{
+    __asm__ volatile(
+            "mv a0, %0\n\t"
+            "li a7, 0x1\n\t",
+            "ecall\n\t" :: "r"(c) : "a0", "a7"
+            );
+}
