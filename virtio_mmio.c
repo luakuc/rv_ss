@@ -1,5 +1,6 @@
 #include "virtio_mmio.h"
 #include "io_interface.h"
+#include "memory_manager.h"
 #include "string.h"
 
 // virtio mmio register offsets
@@ -23,6 +24,10 @@
 #define STATUS (0x70)
 #define QUEUE_DESC_LOW (0x80)
 #define QUEUE_DESC_HIGH (0x84)
+#define QUEUE_AVAIL_LOW (0x90)
+#define QUEUE_AVAIL_HIGH (0x94)
+#define QUEUE_USED_LOW (0xa0)
+#define QUEUE_USED_HIGH (0xa4)
 // etc
 
 enum device_type
@@ -54,6 +59,47 @@ enum device_type
 #define VIRTIO_BLK_F_TOPOLOGY 10
 #define VIRTIO_BLK_F_CONFIG_WCE 11
 
+#define VIRTIO_QUEUE_SIZE 1
+
+typedef struct virtq_used
+{
+    uint16_t flags;
+    uint16_t index;
+    struct virtq_used_elem
+    {
+        uint32_t id;
+        uint32_t len;
+    } ring[VIRTIO_QUEUE_SIZE];
+    uint16_t avail_event;
+} virtq_used_t;
+
+typedef struct virtqueue
+{
+    struct virtq_desc
+    {
+        uint64_t address; // physical address
+        uint32_t len;
+        uint16_t flags;
+        uint16_t next;
+    } desc[VIRTIO_QUEUE_SIZE];
+
+    struct virtq_avail
+    {
+        uint16_t flags;
+        uint16_t index;
+        uint16_t ring[VIRTIO_QUEUE_SIZE];
+        uint16_t used_event;
+    } avail;
+} virtqueue_pre_t;
+
+typedef struct virtio_block
+{
+    virtqueue_pre_t *desc_avail;
+    virtq_used_t *used;
+} virtio_block_t;
+
+static virtio_block_t virtio_block;
+
 static bool init_virtio_block(const uintptr_t base)
 {
     // 4.1.1 Device Initialization & 3.1.1
@@ -75,16 +121,16 @@ static bool init_virtio_block(const uintptr_t base)
     put_string("virtio,block: device features 0x");
     put_string(features_str);
     put_string("\n");
-    //TODO write the features bit
+    // TODO write the features bit
 
     // 5. set the features_ok status bit
     *status |= STATUS_FEATURES_OK;
 
     // 6. read features_ok bit
-    if(!(*status & STATUS_FEATURES_OK))
+    if (!(*status & STATUS_FEATURES_OK))
     {
         // setup failed
-        put_string("features ok status bit is zero");
+        put_string("features ok status bit is zero\n");
         return false;
     }
 
@@ -95,9 +141,60 @@ static bool init_virtio_block(const uintptr_t base)
 
     // 4.2.3.2 Virtqueue Configuration
     // 1. select the queue writing its indext to QueueSel
-    uint32_t *queue_sel = (uint32_t*)(base + QUEUE_SEL);
+    uint32_t *queue_sel = (uint32_t *)(base + QUEUE_SEL);
+    *queue_sel = 0;
 
-    return false;
+    // 2. check the QueueReady
+    uint32_t *queue_ready = (uint32_t *)(base + QUEUE_READY);
+    if ((*queue_ready) != 0)
+    {
+        put_string("the queue 0 is already used\n");
+        return false;
+    }
+
+    // 3. read maximum queue size
+    uint32_t *max_queue_size = (uint32_t *)(base + QUEUE_NUM_MAX);
+    if ((*max_queue_size) == 0)
+    {
+        put_string("maximum queue size is zero\n");
+        return false;
+    }
+
+// 4. allocate queue pages
+#define PAGE_SIZE 0x1000
+    uint32_t *pages = (uint32_t *)knalloc_4k(2);
+    memory_set(pages, 0x00, PAGE_SIZE * 2);
+
+    virtio_block.desc_avail = (virtqueue_pre_t *)pages;
+    virtio_block.used = (virtq_used_t *)pages + PAGE_SIZE;
+
+    // 5. notify the device about the queue size
+    uint32_t *queue_num = (uint32_t *)(base + QUEUE_NUM);
+    *queue_num = 1;
+
+    // 6. write physical addresses of the queue's descriptor table.
+    // - QueueDescLow | QueueDescHigh
+    // - QueueAvailLow | QueueAvailHigh
+    // - QueueUsedLow | QueueUsedHigh
+    uint32_t *queues_desc_low = (uint32_t *)(base + QUEUE_DESC_LOW);
+    uint32_t *queues_desc_high = (uint32_t *)(base + QUEUE_DESC_LOW);
+    *queues_desc_low = (uintptr_t)virtio_block.desc_avail;
+    *queues_desc_high = (uintptr_t)virtio_block.desc_avail >> 32;
+
+    uint32_t *queues_avail_low = (uint32_t *)(base + QUEUE_AVAIL_LOW);
+    uint32_t *queues_avail_high = (uint32_t *)(base + QUEUE_AVAIL_HIGH);
+    *queues_avail_low = (uintptr_t)&virtio_block.desc_avail->avail;
+    *queues_avail_high = (uintptr_t)&virtio_block.desc_avail->avail >> 32;
+
+    uint32_t *queue_used_low = (uint32_t*)(base + QUEUE_USED_LOW);
+    uint32_t *queue_used_high = (uint32_t*)(base + QUEUE_USED_HIGH);
+    *queue_used_low = (uintptr_t)virtio_block.used;
+    *queue_used_high = (uintptr_t)virtio_block.used >> 32;
+
+    // 7. write 0x01 to QueueReady
+    *queue_ready = 1;
+
+    return true;
 }
 
 bool init_virtio_mmio(const struct memory_map_entry *memory_map_entry)
