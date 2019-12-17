@@ -52,13 +52,11 @@ _save_trap_frame:
     csrr s2, scause
     csrr s3, sstatus
     csrr s4, sscratch
-    csrr s5, CSR_HSTATUS
     sd s0, TF_SEPC_OFFSET(sp)
     sd s1, TF_STVAL_OFFSET(sp)
     sd s2, TF_SCAUSE_OFFSET(sp)
     sd s3, TF_SSTATUS_OFFSET(sp)
     sd s4, TF_TP_OFFSET(sp)
-    sd s5, TF_HSTATUS(sp)
 
     ld s0, TP_USER_SP_OFFSET(tp)
     sd s0, TF_SP_OFFSET(sp)
