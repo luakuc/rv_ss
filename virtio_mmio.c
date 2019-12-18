@@ -100,6 +100,17 @@ typedef struct virtio_block
 
 static virtio_block_t virtio_block;
 
+#define VIRTIO_BLK_T_IN (0)
+#define VIRTIO_BLK_T_OUT (1)
+#define VIRTIO_BLK_T_FLUSH (4)
+
+typedef struct virtio_blk_req
+{
+    uint32_t type;
+    uint32_t reserved;
+    uint64_t sector;
+} virtio_blk_req_t;
+
 static bool init_virtio_block(const uintptr_t base)
 {
     // 4.1.1 Device Initialization & 3.1.1
@@ -116,12 +127,16 @@ static bool init_virtio_block(const uintptr_t base)
     // 4. read device feature bits and write the subset of the feature bits
     uint32_t *device_features = (uint32_t *)(base + DEVICE_FEATURES);
 
-    char features_str[10];
+    char features_str[10] = {0};
+    memory_set(features_str, 0x00, 10);
     int_to_str(*device_features, features_str);
     put_string("virtio,block: device features 0x");
     put_string(features_str);
     put_string("\n");
     // TODO write the features bit
+    *device_features &= ~(1 << VIRTIO_BLK_F_RO);
+    *device_features &= ~(1 << VIRTIO_BLK_F_SCSI);
+    *device_features &= ~(1 << VIRTIO_BLK_F_CONFIG_WCE);
 
     // 5. set the features_ok status bit
     *status |= STATUS_FEATURES_OK;
