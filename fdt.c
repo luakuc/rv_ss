@@ -294,7 +294,9 @@ device_tree_t *search_node(device_tree_t *dt, const char *node_path)
     device_tree_t *current = dt->subnodes;
     while (current)
     {
-        bool result = string_compare(&node_path[1], current->name, length);
+        size_t name_len = string_length(&node_path[1]);
+        size_t len = length > name_len ? name_len : length;
+        bool result = string_compare(&node_path[1], current->name, len);
         if (result)
         {
             if (is_continue)
@@ -313,7 +315,6 @@ device_tree_t *search_node(device_tree_t *dt, const char *node_path)
 }
 
 property_t *get_property(const char *node_path, const char *prop_name)
-
 {
     // e.g. node_path: "/cpus/cpu@0", prop_name: "riscv,isa"
     device_tree_t *dt = search_node(device_tree, node_path);
