@@ -27,6 +27,11 @@ void csr_write_sepc(uint64_t sepc)
     __asm__ volatile("csrw sepc, %0" ::"r"(sepc));
 }
 
+void csr_write_sstatus(uint32_t value)
+{
+    __asm__ volatile ("csrw sstatus, %0" ::"r"(value));
+}
+
 uint64_t csr_read_scause(void)
 {
     uint64_t value;
@@ -45,6 +50,20 @@ uint64_t csr_read_sepc(void)
 {
     uint64_t value;
     __asm__ volatile("csrr %0, sepc" : "=r"(value));
+    return value;
+}
+
+uint64_t csr_read_sscratch(void)
+{
+    uint64_t value;
+    __asm__ volatile("csrr %0, sscratch" : "=r"(value));
+    return value;
+}
+
+uint64_t csr_read_sstatus(void)
+{
+    uint64_t value;
+    __asm__ volatile("csrr %0, sstatus": "=r"(value));
     return value;
 }
 

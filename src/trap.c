@@ -16,7 +16,7 @@
 
 extern void trap_handler(void);
 
-static thread_info_t bsp_ti;
+static thread_local_t bsp_ti;
 
 bool init_trap(uint64_t cpu_id)
 {

@@ -7,10 +7,13 @@ void csr_write_sie(uint64_t value);
 void csr_write_sscratch(uint64_t value);
 void csr_write_satp(uint64_t satp);
 void csr_write_sepc(uint64_t sepc);
+void csr_write_sstatus(uint32_t value);
 
 uint64_t csr_read_scause(void);
 uint64_t csr_read_stval(void);
 uint64_t csr_read_sepc(void);
+uint64_t csr_read_sscratch(void);
+uint64_t csr_read_sstatus(void);
 
 // for CSRs of hypervisor extension
 uint64_t csr_read_vsstatus(void);

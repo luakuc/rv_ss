@@ -28,6 +28,7 @@ typedef struct context
 
 typedef struct thread_struct
 {
+    struct thread_struct* next;
     uint64_t id;
     context_t context;
     page_table_t page_table;
@@ -35,3 +36,4 @@ typedef struct thread_struct
 
 thread_struct_t *create_kernel_thread(uint64_t entry_address);
 void task_switch(thread_struct_t *prev_thread, thread_struct_t *next_thread);
+void kick_thread(context_t* run);

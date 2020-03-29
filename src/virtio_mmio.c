@@ -2,6 +2,8 @@
 #include "io_interface.h"
 #include "memory_manager.h"
 #include "string.h"
+#include "fdt.h"
+#include "endian.h"
 
 // virtio mmio register offsets
 // There are details in
@@ -59,7 +61,7 @@ enum device_type
 #define VIRTIO_BLK_F_TOPOLOGY 10
 #define VIRTIO_BLK_F_CONFIG_WCE 11
 
-#define VIRTIO_QUEUE_SIZE 1
+#define VIRTIO_QUEUE_SIZE 3
 
 typedef struct virtq_used
 {
@@ -96,6 +98,8 @@ typedef struct virtio_block
 {
     virtqueue_pre_t *desc_avail;
     virtq_used_t *used;
+    uint8_t request_status[VIRTIO_QUEUE_SIZE];
+    uint32_t* mmio_base;
 } virtio_block_t;
 
 static virtio_block_t virtio_block;
@@ -111,8 +115,54 @@ typedef struct virtio_blk_req
     uint64_t sector;
 } virtio_blk_req_t;
 
+#define VRING_DESC_F_NEXT 1
+#define VRING_DESC_F_WRITE 2
+
+void virtio_block_request(bool write, uint64_t* base_ptr)
+{
+    struct virtq_desc *desc0, *desc1, *desc2;
+    desc0 = &virtio_block.desc_avail->desc[0];
+    desc1 = &virtio_block.desc_avail->desc[1];
+    desc2 = &virtio_block.desc_avail->desc[2];
+
+    virtio_blk_req_t request = {
+        .type = write ? VIRTIO_BLK_T_OUT : VIRTIO_BLK_T_IN,
+        .reserved = 0,
+        .sector = 0, //TODO
+    };
+
+    desc0->address = (uintptr_t)&request;
+    desc0->len = sizeof(request);
+    desc0->flags = VRING_DESC_F_NEXT;
+    desc0->next = 1;
+
+    desc1->address = (uintptr_t)base_ptr;
+    desc1->len = 1;
+    if(write)
+    {
+        desc1->flags = 0;
+    }
+    else
+    {
+        desc1->flags = VRING_DESC_F_WRITE;
+    }
+
+    desc1->flags |= VRING_DESC_F_NEXT;
+    desc1->next = 2;
+
+    desc2->address = (uintptr_t)&virtio_block.request_status[0];
+    desc2->len = 1;
+    desc2->flags = VRING_DESC_F_WRITE;
+    desc2->next = 0;
+
+    *(virtio_block.mmio_base + QUEUE_NOTIFY) = 0;
+    //TODO
+    //sleep this thread
+}
+
 static bool init_virtio_block(const uintptr_t base)
 {
+    virtio_block.mmio_base = base;
     // 4.1.1 Device Initialization & 3.1.1
     // 1. reset the device
     uint32_t *status = (uint32_t *)(base + STATUS);
@@ -212,9 +262,40 @@ static bool init_virtio_block(const uintptr_t base)
     return true;
 }
 
-bool init_virtio_mmio(const struct memory_map_entry *memory_map_entry)
+static bool get_base_register(uint64_t* base)
 {
-    uintptr_t base = memory_map_entry->base;
+    const char *name = "reg";
+    property_t *prop = get_property("/virtio_mmio@", name);
+    if(!prop)
+    {
+        return false;
+    }
+
+    // 0x0, base address, 0x0, size
+    if(prop->len != 4)
+    {
+        return false;
+    }
+
+    //uint64_t size;
+    *base = (uint64_t)big2little_32(prop->value[0]) << 32 | big2little_32(prop->value[1]);
+    //size = (uint64_t)big2little_32(prop->value[2]) << 32 | big2little_32(prop->value[3]);
+
+    return true;
+}
+
+bool init_virtio_mmio(void)
+{
+    //TODO
+    return true;
+
+    //TODO get_base_register has bug.
+    uint64_t base;
+    bool result = get_base_register(&base);
+    if(!result)
+    {
+        return false;
+    }
 
     uint32_t magic_value = *(uint32_t *)(base + MAGIC_VALUE);
 

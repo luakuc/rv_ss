@@ -7,6 +7,8 @@
 #include "memory_map.h"
 #include "plic.h"
 #include "sbi.h"
+#include "scheduler.h"
+#include "thread.h"
 #include "timer.h"
 #include "trap.h"
 #include "uart.h"
@@ -19,7 +21,6 @@
 extern const struct memory_map_entry memory_map[];
 
 static int count_kthread = 0;
-static int count_main = 0;
 
 void kthread_0(void)
 {
@@ -31,9 +32,11 @@ void kthread_0(void)
     write_char_by_uart('d');
     write_char_by_uart('\n');
 
+    put_string("thread_0")
     while (true)
     {
         count_kthread++;
+
         __asm__ volatile("wfi");
     }
 }
@@ -96,7 +99,7 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
         panic("failed the init_uart");
     }
 
-    result = init_virtio_mmio(&memory_map[VIRT_VIRTIO]);
+    result = init_virtio_mmio();
     if (!result)
     {
         put_string("Failed to initialize virtio devices.\n"
@@ -117,32 +120,38 @@ void start_kernel(uint64_t hart_id, uintptr_t device_tree_base)
         put_string("VMM module is disabled\n");
     }
 
-    // void init_test_thread();
-    // init_test_thread(kthread_0);
+    result = init_scheduler();
+    if (!result)
+    {
+        panic("failed the init_scheduler");
+    }
+
+        // void init_test_thread();
+        // init_test_thread(kthread_0);
 
     put_string("hello\n");
     enable_interrupt();
 
-    if(is_vmm_enabled)
-    {
-        bool run_test_guest(void);
-        result = run_test_guest();
-        if (!result)
-        {
-            panic("error occured in run_test_guest\n");
-        }
-    }
+    //if (is_vmm_enabled)
+    //{
+    //    bool run_test_guest(void);
+    //    result = run_test_guest();
+    //    if (!result)
+    //    {
+    //        panic("error occured in run_test_guest\n");
+    //    }
+    //}
 
-    //void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
-    //virtual_cpu_t *vcpu = alloc_vcpu();
-    //setup_test_guest(vcpu, (uint64_t)guest_func);
-    //run_guest(vcpu);
+    // void setup_test_guest(virtual_cpu_t * vcpu, uint64_t guest_func);
+    // virtual_cpu_t *vcpu = alloc_vcpu();
+    // setup_test_guest(vcpu, (uint64_t)guest_func);
+    // run_guest(vcpu);
 
     // panic("finish");
 
-    while (true)
-    {
-        count_main++;
-        __asm__ volatile("wfi");
-    }
+    thread_struct_t *test_thread = create_kernel_thread((uint64_t)kthread_0);
+    enqueue_ready_list(test_thread);
+
+    kick_off();
+    panic("why");
 }

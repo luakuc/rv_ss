@@ -1,8 +1,8 @@
 #include "timer.h"
 #include "sbi.h"
 #include "uart.h"
-
 #include "thread.h"
+#include "scheduler.h"
 
 #include <stdint.h>
 
@@ -25,10 +25,10 @@ bool init_timer(void)
 void count_up_tick(void)
 {
     ticks++;
-    // TODO context switch
     uint64_t curret_time = rdtime();
     sbi_set_timer(10000000 + curret_time);
 
-    void thread_swap_test(void);
+    schedule();
+    //void thread_swap_test(void);
     // thread_swap_test();
 }

@@ -7,20 +7,19 @@
 #include "trap_handler.h"
 #include "csr_type.h"
 
-
-typedef struct thread_info
+typedef struct thread_local
 {
     uint64_t user_stack;
     uint64_t kernel_stack;
     uint64_t cpu_id;
-} thread_info_t;
+} thread_local_t;
 
 typedef struct trap_frame
 {
     uint64_t ra;
     uint64_t gp;
     // uint64_t tp;
-    thread_info_t *tp;
+    thread_local_t *tp;
     uint64_t t0;
     uint64_t t1;
     uint64_t t2;

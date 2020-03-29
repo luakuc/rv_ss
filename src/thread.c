@@ -9,7 +9,7 @@
 
 static thread_struct_t boot_thread;
 static thread_struct_t test_thread;
-static thread_info_t thread_info_1;
+static thread_local_t thread_local_1;
 
 void context_switch(context_t *prev, context_t *next);
 void return_from_exception(void);
@@ -47,10 +47,11 @@ void create_user_process(uint64_t entry_address)
     trap_frame->sepc = entry_address;
     trap_frame->sp = (thread_stack + 0x1000 - 1) & -8;
     trap_frame->sstatus = 0x8000000000006020;
-    thread_info_1.user_stack = trap_frame->sp;
-    thread_info_1.cpu_id = 0;
-    trap_frame->sscratch = (uint64_t)&thread_info_1;
-    trap_frame->tp = &thread_info_1;
+
+    thread_local_1.user_stack = trap_frame->sp;
+    thread_local_1.cpu_id = 0;
+    trap_frame->sscratch = (uint64_t)&thread_local_1;
+    trap_frame->tp = &thread_local_1;
 
     new_thread->id = get_next_thread_id();
     memory_set(&new_thread->context, 0x00, sizeof(context_t));
@@ -80,9 +81,13 @@ void create_user_process(uint64_t entry_address)
     new_thread->page_table = page_table;
 }
 
-thread_struct_t *create_kernel_thread_test(uint64_t entry_address)
+thread_struct_t *create_kernel_thread(uint64_t entry_address)
 {
-    thread_struct_t *new_thread = &test_thread;
+    thread_struct_t *new_thread = kalloc(sizeof(thread_struct_t));
+    if(!new_thread)
+    {
+        return NULL;
+    }
 
     uint64_t thread_stack = (uint64_t)kalloc_4k();
     if (thread_stack == (uint64_t)NULL)
@@ -96,7 +101,14 @@ thread_struct_t *create_kernel_thread_test(uint64_t entry_address)
     trap_frame->sepc = entry_address;
     trap_frame->sp = stack_top;
     trap_frame->sstatus = 0x8000000000006120;
-    trap_frame->tp = &thread_info_1;
+
+    thread_local_t *thread_local = (thread_local_t*)kalloc(sizeof(thread_local_t));
+    if(!thread_local)
+    {
+        return NULL;
+    }
+
+    trap_frame->tp = thread_local;
     trap_frame->tp->user_stack = (uint64_t)NULL;
 
     uint64_t kernel_stack = (uint64_t)kalloc_4k();
@@ -143,5 +155,5 @@ void thread_swap_test(void)
 void init_test_thread(uint64_t entry)
 {
     // create_kernel_thread_test(entry);
-    create_user_process((uint64_t)_user_sample);
+    //create_user_process((uint64_t)_user_sample);
 }
